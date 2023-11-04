@@ -1,12 +1,27 @@
-﻿<Window x:Class="SR7_2022POP2023.MainWindow"
+﻿<Window x:Class="HotelReservations.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SR7_2022POP2023"
+        xmlns:local="clr-namespace:HotelReservations"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Hotel Reservations TM" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem 
+                Header="General"
+                Height="30">
+                <MenuItem 
+                    Name="RoomsMI" 
+                    Header="Rooms"
+                    Click="RoomsMI_Click"/>
+            </MenuItem>
+        </Menu>
 
     </Grid>
 </Window>

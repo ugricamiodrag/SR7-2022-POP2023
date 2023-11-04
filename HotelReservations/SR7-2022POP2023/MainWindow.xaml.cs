@@ -12,8 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HotelReservations.Windows;
 
-namespace SR7_2022POP2023
+namespace HotelReservations
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,6 +24,12 @@ namespace SR7_2022POP2023
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void RoomsMI_Click(object sender, RoutedEventArgs e)
+        {
+            var roomsWindow = new Rooms();
+            roomsWindow.Show();
         }
     }
 }
