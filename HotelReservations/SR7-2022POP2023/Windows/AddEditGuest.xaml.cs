@@ -1,6 +1,4 @@
-﻿using HotelReservations.Model;
-using HotelReservations.Service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,52 +11,55 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HotelReservations.Model;
+using HotelReservations.Service;
+
 
 namespace HotelReservations.Windows
 {
-    public partial class AddEditRoom : Window
+    /// <summary>
+    /// Interaction logic for AddEditGuest.xaml
+    /// </summary>
+    public partial class AddEditGuest : Window
     {
-        private RoomService roomService;
+        private GuestService guestService;
 
-        private Room contextRoom;
-        public AddEditRoom(Room? room = null)
+        private Model.Guest contextGuest;
+        public AddEditGuest(Model.Guest? guest = null)
         {
-            if (room == null)
+            if (guest == null)
             {
-                contextRoom = new Room();
+                contextGuest = new Model.Guest();
             }
             else
             {
-                contextRoom = room.Clone();
+                contextGuest = guest.Clone();
             }
 
             InitializeComponent();
-            roomService = new RoomService();
+            guestService = new GuestService();
 
-            AdjustWindow(room);
+            AdjustWindow(guest);
 
-            this.DataContext = contextRoom;
+            this.DataContext = contextGuest;
         }
 
-        public void AdjustWindow(Room? room = null)
+        public void AdjustWindow(Model.Guest? guest = null)
         {
-            if (room != null)
+            if (guest != null)
             {
-                Title = "Edit Room";
+                Title = "Edit Guest";
             }
             else
             {
-                Title = "Add Room";
+                Title = "Add Guest";
             }
 
-            // OVE PODATKE PREKO SERVISA, PLS
-            var roomTypes = Hotel.GetInstance().RoomTypes;
-            RoomTypesCB.ItemsSource = roomTypes;
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            roomService.SaveRoom(contextRoom);
+            guestService.SaveGuest(contextGuest);
 
             DialogResult = true;
             Close();

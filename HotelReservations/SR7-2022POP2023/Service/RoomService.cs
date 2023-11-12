@@ -45,9 +45,18 @@ namespace HotelReservations.Service
             return filteredRooms;
         }
 
-        public void SaveRoom(Room newRoom)
+        public void SaveRoom(Room room)
         {
-            Hotel.GetInstance().Rooms.Add(newRoom);
+            if (room.Id == 0)
+            {
+                room.Id = GetNextIdValue();
+                Hotel.GetInstance().Rooms.Add(room);
+            }
+            else
+            {
+                var index = Hotel.GetInstance().Rooms.FindIndex(r => r.Id == room.Id);
+                Hotel.GetInstance().Rooms[index] = room;
+            }
         }
 
         public int GetNextIdValue()
@@ -73,18 +82,6 @@ namespace HotelReservations.Service
             return Hotel.GetInstance().RoomTypes.FirstOrDefault(rt => rt.Name == roomTypeName);
         }
 
-        public void UpdateRoom(Room room)
-        {
-            var rooms = roomRepository.Load();
-            if (rooms != null)
-            {
-                int index = rooms.FindIndex(r => r.Id == room.Id);
-                if (index >= 0)
-                {
-                    rooms[index] = room;
-                    roomRepository.Save(rooms);
-                }
-            }
-        }
+      
     }
 }

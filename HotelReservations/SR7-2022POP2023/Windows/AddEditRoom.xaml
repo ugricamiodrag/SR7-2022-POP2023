@@ -35,7 +35,8 @@
                     Name="RoomNumberTB"
                     Height="30"
                     Width="150"
-                    VerticalContentAlignment="Center"/>
+                    VerticalContentAlignment="Center"
+                    Text="{Binding Path=RoomNumber}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label
@@ -43,7 +44,8 @@
                     Width="150"
                     Content="Has TV?"
                     ></Label>
-                <CheckBox Name="HasTVCB" VerticalAlignment="Center"/>
+                <CheckBox Name="HasTVCB" VerticalAlignment="Center"
+                          IsChecked="{Binding Path=HasTV}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label
@@ -51,7 +53,8 @@
                     Width="150"
                     Content="Has mini bar?"
                     ></Label>
-                <CheckBox Name="HasMiniBarCB" VerticalAlignment="Center"/>
+                <CheckBox Name="HasMiniBarCB" VerticalAlignment="Center"
+                          IsChecked="{Binding Path=HasMiniBar}"/>
             </StackPanel>
             <StackPanel
                 Orientation="Horizontal"
@@ -63,7 +66,8 @@
                 <ComboBox 
                     Name="RoomTypesCB"
                     Height="30" 
-                    Width="150"/>
+                    Width="150"
+                    SelectedItem="{Binding RoomType}"/>
             </StackPanel>
         </StackPanel>
         <StackPanel

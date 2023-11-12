@@ -20,6 +20,10 @@
                     Name="RoomsMI" 
                     Header="Rooms"
                     Click="RoomsMI_Click"/>
+                <MenuItem 
+                Name="GuestMI" 
+                Header="Guests"
+            Click="GuestMI_Click"/>
             </MenuItem>
         </Menu>
 

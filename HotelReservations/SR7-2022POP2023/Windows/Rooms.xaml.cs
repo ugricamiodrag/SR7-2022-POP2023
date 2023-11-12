@@ -13,86 +13,111 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HotelReservations.Repository;
+using HotelReservations.Model;
+using System.ComponentModel;
 
 namespace HotelReservations.Windows
 {
     /// <summary>
     /// Interaction logic for Rooms.xaml
     /// </summary>
-    public partial class Rooms : Window
-    {
-        public Rooms()
+        public partial class Rooms : Window
         {
-            InitializeComponent();
-            FillData();
-        }
-
-        public void FillData()
-        {
-            var roomService = new RoomService();
-            var rooms = roomService.GetAllRooms();
-
-            RoomsDG.ItemsSource = null;
-            RoomsDG.ItemsSource = rooms;
-        }
-
-        private void RoomsDG_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            if(e.PropertyName.ToLower() == "IsActive".ToLower())
+            private ICollectionView view;
+            public Rooms()
             {
-                e.Column.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void AddBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var addRoomWindow = new AddEditRoom();
-
-            Hide();
-            if(addRoomWindow.ShowDialog() == true)
-            {
+                InitializeComponent();
                 FillData();
             }
-            Show();
+
+            public void FillData()
+            {
+                var roomService = new RoomService();
+                var rooms = roomService.GetAllRooms();
+
+                view = CollectionViewSource.GetDefaultView(rooms);
+                view.Filter = DoFilter;
+
+                RoomsDG.ItemsSource = null;
+                RoomsDG.ItemsSource = view;
+                RoomsDG.IsSynchronizedWithCurrentItem = true;
+
+                RoomsDG.SelectedIndex = -1;
+                view.Refresh();
         }
 
-        private void EditBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (RoomsDG.SelectedItem == null)
+            private bool DoFilter(object roomObject)
             {
-                MessageBox.Show("Please select a room to edit.", "No room selected", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                var room = roomObject as Room;
+
+                var roomNumberSearchParam = RoomNumberSearchTB.Text;
+
+                if (room.RoomNumber.Contains(roomNumberSearchParam))
+                {
+                    return true;
+                }
+
+                return false;
             }
 
-            Model.Room selectedRoom = (Model.Room)RoomsDG.SelectedItem;
-
-            var editRoomWindow = new AddEditRoom(selectedRoom);
-
-            Hide();
-            if (editRoomWindow.ShowDialog() == true)
+            private void RoomsDG_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
             {
-                FillData();
+                if (e.PropertyName.ToLower() == "IsActive".ToLower())
+                {
+                    e.Column.Visibility = Visibility.Collapsed;
+                }
             }
-            Show();
-        }
 
+            private void AddBtn_Click(object sender, RoutedEventArgs e)
+            {
+                var addRoomWindow = new AddEditRoom();
+
+                Hide();
+                if (addRoomWindow.ShowDialog() == true)
+                {
+                    FillData();
+                }
+                Show();
+            }
+
+            private void EditBtn_Click(object sender, RoutedEventArgs e)
+            {
+                var selectedRoom = (Room)view.CurrentItem;
+
+                if (selectedRoom != null)
+                {
+                    var editRoomWindow = new AddEditRoom(selectedRoom);
+
+                    Hide();
+
+                    if (editRoomWindow.ShowDialog() == true)
+                    {
+                        FillData();
+                    }
+
+                    Show();
+                }
+            }
+
+            private void RoomNumberSearchTB_PreviewKeyUp(object sender, KeyEventArgs e)
+            {
+                view.Refresh();
+            }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
-            RoomService roomService = new RoomService();
-            var result = MessageBox.Show("Deleting the room", "Do you want to delete the room? ", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if(result == MessageBoxResult.Yes) {
-                Model.Room roomToDelete = (Model.Room)RoomsDG.SelectedItem;
-                var pickedRoom = roomService.GetAllRooms().Find(rn => rn.Id == roomToDelete.Id);
-                pickedRoom.IsActive = false;
 
+            var roomToDelete = (Room)RoomsDG.SelectedItem;
+            if (roomToDelete != null)
+            {
+                roomToDelete.IsActive = false;
+                FillData();
             }
-
-            Show();
-            Close();
-
-
+            else
+            {
+                MessageBox.Show("You didn't pick a room.");
+            }
+            
 
         }
     }
