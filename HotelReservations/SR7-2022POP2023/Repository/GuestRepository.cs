@@ -46,8 +46,8 @@ namespace HotelReservations.Repository
 
                     while ((line = streamReader.ReadLine()) != null)
                     {
-                        var room = FromCSV(line);
-                        guests.Add(room);
+                        var guest = FromCSV(line);
+                        guests.Add(guest);
                     }
 
                     return guests;

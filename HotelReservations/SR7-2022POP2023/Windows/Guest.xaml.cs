@@ -88,11 +88,37 @@ namespace HotelReservations.Windows
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
 
+            var selectedGuest = (Model.Guest)view.CurrentItem;
+
+            if (selectedGuest != null)
+            {
+                var editGuestWindow = new AddEditGuest(selectedGuest);
+
+                Hide();
+
+                if (editGuestWindow.ShowDialog() == true)
+                {
+                    FillData();
+                }
+
+                Show();
+            }
+            
+
         }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            var guestToDelete = (Model.Guest)GuestDG.SelectedItem;
+            if (guestToDelete != null)
+            {
+                guestToDelete.IsActive = false;
+                FillData();
+            }
+            else
+            {
+                MessageBox.Show("You didn't pick a guest.");
+            }
         }
     }
 }

@@ -5,8 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotelReservations.Windows"
         mc:Ignorable="d"
-        Title="AddEditGuest" Height="450" Width="800">
+        Title="AddEditRoom" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label Height="30" Width="150" Content="Name:" />
+                <TextBox Name="NameTB" Height="30" Width="150" VerticalContentAlignment="Center" Text="{Binding Path=Name}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Height="30" Width="150" Content="Surname:" />
+                <TextBox Name="SurnameTB" Height="30" Width="150" VerticalContentAlignment="Center" Text="{Binding Path=Surname}" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Name="SaveBtn" Content="Save" Width="80" Height="30" Margin="5,0,5,0" Click="SaveBtn_Click" />
+            <Button Name="CancelBtn" Content="Cancel" Width="80" Height="30" Click="CancelBtn_Click" />
+        </StackPanel>
     </Grid>
 </Window>

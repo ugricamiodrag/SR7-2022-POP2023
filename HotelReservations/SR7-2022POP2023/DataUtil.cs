@@ -61,10 +61,17 @@ namespace HotelReservations
             {
                 IRoomRepository roomRepository = new RoomRepository();
                 var loadedRooms = roomRepository.Load();
+                IGuestRepository guestRepository = new GuestRepository();
+                var guests = guestRepository.Load();
 
                 if (loadedRooms != null)
                 {
                     Hotel.GetInstance().Rooms = loadedRooms;
+                }
+
+                if (guests != null)
+                {
+                    Hotel.GetInstance().Guests = guests;
                 }
 
 
@@ -90,6 +97,9 @@ namespace HotelReservations
                 // Posle toga će rooms.txt postojati (ako nešto ne pođe po zlu)
                 IRoomRepository roomRepository = new RoomRepository();
                 roomRepository.Save(Hotel.GetInstance().Rooms);
+
+                IGuestRepository guestRepository = new GuestRepository();
+                guestRepository.Save(Hotel.GetInstance().Guests);
 
 
                 //BinaryRoomRepository binaryRoomRepository = new BinaryRoomRepository();

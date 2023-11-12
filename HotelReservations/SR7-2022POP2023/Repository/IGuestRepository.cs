@@ -7,7 +7,7 @@ using HotelReservations.Model;
 
 namespace HotelReservations.Repository
 {
-    interface IGuestRepository
+    public interface IGuestRepository
     {
         List<Guest> Load();
 
