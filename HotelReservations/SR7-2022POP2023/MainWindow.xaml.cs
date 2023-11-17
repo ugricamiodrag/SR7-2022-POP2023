@@ -38,5 +38,11 @@ namespace HotelReservations
             var guestWindow = new Guest();
             guestWindow.Show();
         }
+
+        private void UsersMI_Click(object sender, RoutedEventArgs e)
+        {
+            var usersWindow = new Users();
+            usersWindow.Show();
+        }
     }
 }

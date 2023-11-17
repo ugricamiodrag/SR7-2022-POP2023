@@ -64,6 +64,9 @@ namespace HotelReservations
                 IGuestRepository guestRepository = new GuestRepository();
                 var guests = guestRepository.Load();
 
+                IUserRepository userRepository = new UserRepository();
+                var loadedUsers = userRepository.Load();
+
                 if (loadedRooms != null)
                 {
                     Hotel.GetInstance().Rooms = loadedRooms;
@@ -72,6 +75,11 @@ namespace HotelReservations
                 if (guests != null)
                 {
                     Hotel.GetInstance().Guests = guests;
+                }
+
+                if (loadedUsers != null)
+                {
+                    Hotel.GetInstance().Users = loadedUsers;
                 }
 
 
@@ -100,6 +108,9 @@ namespace HotelReservations
 
                 IGuestRepository guestRepository = new GuestRepository();
                 guestRepository.Save(Hotel.GetInstance().Guests);
+
+                IUserRepository userRepository = new UserRepository();
+                userRepository.Save(Hotel.GetInstance().Users);
 
 
                 //BinaryRoomRepository binaryRoomRepository = new BinaryRoomRepository();

@@ -59,10 +59,18 @@ namespace HotelReservations.Windows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            guestService.SaveGuest(contextGuest);
+            if (!string.IsNullOrEmpty(contextGuest.Name) || !string.IsNullOrEmpty(contextGuest.Surname)) 
+            {
+                guestService.SaveGuest(contextGuest);
 
-            DialogResult = true;
-            Close();
+                DialogResult = true;
+                Close();
+            }
+            else
+            {
+                MessageBox.Show("Fill the required fields.", "Can't save", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)

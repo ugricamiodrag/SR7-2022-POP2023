@@ -9,7 +9,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="320"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -30,13 +30,25 @@
                     Height="30"
                     Width="150"
                     Content="Room number:"
+                    Margin="0,0,0,15"
                     ></Label>
                 <TextBox 
                     Name="RoomNumberTB"
                     Height="30"
                     Width="150"
                     VerticalContentAlignment="Center"
-                    Text="{Binding Path=RoomNumber}"/>
+                    Margin="0,0,0,15"
+                    Text="{Binding Path=RoomNumber, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+                <Label Content="*" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label
@@ -67,8 +79,20 @@
                     Name="RoomTypesCB"
                     Height="30" 
                     Width="150"
-                    SelectedItem="{Binding RoomType}"/>
+                    VerticalContentAlignment="Center"
+                    SelectedItem="{Binding RoomType, ValidatesOnExceptions=True, UpdateSourceTrigger=Default}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </ComboBox>
+                <Label Content="*" />
             </StackPanel>
+            
         </StackPanel>
         <StackPanel
             Grid.Row="3" Grid.Column="2"

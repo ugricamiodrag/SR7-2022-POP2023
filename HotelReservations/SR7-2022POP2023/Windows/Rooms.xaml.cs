@@ -84,19 +84,23 @@ namespace HotelReservations.Windows
             {
                 var selectedRoom = (Room)view.CurrentItem;
 
-                if (selectedRoom != null)
+            if (selectedRoom != null)
+            {
+                var editRoomWindow = new AddEditRoom(selectedRoom);
+
+                Hide();
+
+                if (editRoomWindow.ShowDialog() == true)
                 {
-                    var editRoomWindow = new AddEditRoom(selectedRoom);
-
-                    Hide();
-
-                    if (editRoomWindow.ShowDialog() == true)
-                    {
-                        FillData();
-                    }
-
-                    Show();
+                    FillData();
                 }
+
+                Show();
+            }
+            else {
+                MessageBox.Show("You didn't pick a room.");
+                return;
+            }
             }
 
             private void RoomNumberSearchTB_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -110,8 +114,16 @@ namespace HotelReservations.Windows
             var roomToDelete = (Room)RoomsDG.SelectedItem;
             if (roomToDelete != null)
             {
-                roomToDelete.IsActive = false;
-                FillData();
+                var decision = MessageBox.Show($"Do you want to delete the room with number {roomToDelete.RoomNumber}", "Deleting a room", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (decision == MessageBoxResult.Yes) {
+                    roomToDelete.IsActive = false;
+                    FillData();
+                }
+                else
+                {
+                    FillData();
+                }
+                
             }
             else
             {

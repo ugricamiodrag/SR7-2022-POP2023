@@ -103,6 +103,10 @@ namespace HotelReservations.Windows
 
                 Show();
             }
+            else
+            {
+                MessageBox.Show("You didn't pick a guest.");
+            }
             
 
         }

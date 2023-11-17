@@ -58,6 +58,12 @@ namespace HotelReservations.Windows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(contextRoom.RoomNumber) || contextRoom.RoomType == null)
+            {
+                MessageBox.Show("Fill required fields.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             roomService.SaveRoom(contextRoom);
 
             DialogResult = true;

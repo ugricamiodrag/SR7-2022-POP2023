@@ -28,6 +28,8 @@ namespace HotelReservations.Model
         public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 
         public List<Guest> Guests { get; set; } = new List<Guest>();
+
+        public List<User> Users { get; set; } = new List<User>();
         private Hotel() 
         { 
         }

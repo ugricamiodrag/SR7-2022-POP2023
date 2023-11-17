@@ -24,6 +24,9 @@
                 Name="GuestMI" 
                 Header="Guests"
             Click="GuestMI_Click"/>
+                <MenuItem Name="UsersMI"
+                          Header="Users"
+                          Click="UsersMI_Click"/>
             </MenuItem>
         </Menu>
 
