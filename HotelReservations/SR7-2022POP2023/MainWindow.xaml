@@ -12,23 +12,53 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0">
+        <Menu Name="MainMenu">
             <MenuItem 
                 Header="General"
-                Height="30">
+                Height="30"
+                Name="AdministratorGeneral">
                 <MenuItem 
                     Name="RoomsMI" 
                     Header="Rooms"
                     Click="RoomsMI_Click"/>
                 <MenuItem 
-                Name="GuestMI" 
-                Header="Guests"
-            Click="GuestMI_Click"/>
-                <MenuItem Name="UsersMI"
-                          Header="Users"
-                          Click="UsersMI_Click"/>
+                    Name="GuestMI" 
+                    Header="Guests"
+                    Click="GuestMI_Click"/>
+                <MenuItem 
+                    Name="UsersMI"
+                    Header="Users"
+                    Click="UsersMI_Click"/>
             </MenuItem>
+            <MenuItem 
+            Header="General"
+            Height="30"
+                Name="ReceptionistGeneral">
+                <MenuItem 
+                Name="ReservationsMI" 
+                Header="Reservations"
+                Click="ReservationsMI_Click"/>
+            </MenuItem>
+            <MenuItem Name="LogoutButton" Header="Log Out" Click="LogoutButton_Click"/>
         </Menu>
 
+
+        <StackPanel Grid.Row="1" Margin="20" Name="LoginForm">
+
+            <TextBlock Text="Login" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Separator/>
+            <StackPanel Width="310" >
+                <Label Content="Username: "/>
+                <TextBox x:Name="UsernameTextBox" Margin="5" Width="300"/>
+            </StackPanel>
+            <StackPanel Width="310">
+                <Label Content="Password: "/>
+                <PasswordBox x:Name="PasswordBox" Margin="5" Width="300"/>
+            </StackPanel>
+            <StackPanel Width="310">
+            <Button Name="LoginButton" Content="Login" Click="LoginButton_Click" Margin="5" Width="100" />
+                <TextBlock x:Name="ErrorMessageTextBlock" Text="" Foreground="Red" Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

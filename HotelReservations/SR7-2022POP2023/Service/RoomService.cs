@@ -61,7 +61,15 @@ namespace HotelReservations.Service
 
         public int GetNextIdValue()
         {
-            return Hotel.GetInstance().Rooms.Max(r => r.Id) + 1;
+            if (Hotel.GetInstance().Rooms.Any())
+            {
+                return Hotel.GetInstance().Rooms.Max(r => r.Id) + 1;
+            }
+            else
+            {
+
+                return 1;
+            }
         }
 
         public List<RoomType> GetAllRoomTypes()

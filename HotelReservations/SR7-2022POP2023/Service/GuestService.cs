@@ -50,7 +50,7 @@ namespace HotelReservations.Service
 
         private int GetNextIdValue()
         {
-            var maxId = Hotel.GetInstance().Guests.Any() ? Hotel.GetInstance().Guests.Max(r => r.Id) : 0;
+            var maxId = Hotel.GetInstance().Guests.Any() ? Hotel.GetInstance().Guests.Max(r => r.Id) : 1;
             return maxId + 1;
         }
 

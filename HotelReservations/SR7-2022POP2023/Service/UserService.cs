@@ -47,6 +47,19 @@ namespace HotelReservations.Service
             }
         }
 
+        public User ReturnUser(string username,  string password)
+        {
+            var users = GetAllActiveUsers();
+            foreach (var user in users)
+            {
+                if (user.Username.Equals(username) && user.Password.Equals(password))
+                {
+                    return user;
+
+                }
+            }
+            return null!;
+        }
 
         public int GetNextIdValue()
         {
@@ -57,7 +70,7 @@ namespace HotelReservations.Service
             else
             {
         
-                return 0;
+                return 1;
             }
         }
 
