@@ -79,7 +79,6 @@ namespace HotelReservations.Model
         public string UserType { get; set; }
 
 
-        public string MaskedPassword => new string('*', Password.Length);
 
         public User Clone()
         {

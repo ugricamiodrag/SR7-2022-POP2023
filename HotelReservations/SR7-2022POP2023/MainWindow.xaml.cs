@@ -109,5 +109,17 @@ namespace HotelReservations
 
             }
         }
+
+        private void PriceList_Click(object sender, RoutedEventArgs e)
+        {
+            var priceListWindow = new PriceLists();
+            priceListWindow.Show();
+        }
+
+        private void RoomTypesMI_Click(object sender, RoutedEventArgs e)
+        {
+            var rtWindow = new RoomTypesWindow();
+            rtWindow.Show();
+        }
     }
 }

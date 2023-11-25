@@ -56,18 +56,20 @@ namespace HotelReservations.Windows
             else
             {
                 Title = "Add user";
-                if (userService.isUsernameTaken(contextUser.Username) == true)
-                {
-                    MessageBox.Show("Username is already taken.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                
             }
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             var selectedUserType = UserTypeCB.SelectedItem as string;
-            
+
+            if (userService.isUsernameTaken(contextUser.Username) == true)
+            {
+                MessageBox.Show("Username is already taken.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             List<string> userProperties = new List<string>
             {
                 selectedUserType,

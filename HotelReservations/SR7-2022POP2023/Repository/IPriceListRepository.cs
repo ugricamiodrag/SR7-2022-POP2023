@@ -7,12 +7,10 @@ using HotelReservations.Model;
 
 namespace HotelReservations.Repository
 {
-    public interface IUserRepository
+    public interface IPriceListRepository
     {
-        List<User> Load();
+        List<Price> Load();
 
-        void Save(List<User> guests);
-
-        
+        void Save(List<Price> priceList);
     }
 }

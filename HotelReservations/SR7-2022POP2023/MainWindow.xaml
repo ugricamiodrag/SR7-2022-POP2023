@@ -29,7 +29,16 @@
                     Name="UsersMI"
                     Header="Users"
                     Click="UsersMI_Click"/>
+                <MenuItem Name="RoomTypesMI"
+                          Header="Room types"
+                          Click="RoomTypesMI_Click"/>
+                <MenuItem
+                Name="PriceList"
+                Header="Price List"
+                Click="PriceList_Click"
+                />
             </MenuItem>
+            
             <MenuItem 
             Header="General"
             Height="30"

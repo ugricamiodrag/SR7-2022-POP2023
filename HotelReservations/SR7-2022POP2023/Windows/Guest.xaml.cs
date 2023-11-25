@@ -116,8 +116,13 @@ namespace HotelReservations.Windows
             var guestToDelete = (Model.Guest)GuestDG.SelectedItem;
             if (guestToDelete != null)
             {
-                guestToDelete.IsActive = false;
-                FillData();
+                var decision = MessageBox.Show($"Do you want to delete the guest {guestToDelete.Name + " " + guestToDelete.Surname}", "Deleting a guest", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (decision == MessageBoxResult.Yes)
+                {
+                    guestToDelete.IsActive = false;
+                    FillData();
+                }
+                
             }
             else
             {

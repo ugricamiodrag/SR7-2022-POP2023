@@ -87,7 +87,7 @@ namespace HotelReservations.Service
 
         public RoomType GetRoomTypeByName(string roomTypeName)
         {
-            return Hotel.GetInstance().RoomTypes.FirstOrDefault(rt => rt.Name == roomTypeName);
+            return Hotel.GetInstance().RoomTypes.FirstOrDefault(rt => rt.Name == roomTypeName)!;
         }
 
       

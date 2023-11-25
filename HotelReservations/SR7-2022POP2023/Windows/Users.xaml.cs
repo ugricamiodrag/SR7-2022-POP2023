@@ -32,6 +32,7 @@ namespace HotelReservations.Windows
             InitializeComponent();
            
             FillData();
+            UsersDG.AutoGeneratingColumn += UsersDG_AutoGeneratingColumn;
         }
 
         // TODO: Korisničke lozinke ne bi trebalo prikazati
@@ -47,8 +48,11 @@ namespace HotelReservations.Windows
             UsersDG.ItemsSource = view;
             UsersDG.IsSynchronizedWithCurrentItem = true;
 
+            
+
             UsersDG.SelectedIndex = -1;
             view.Refresh();
+            
         }
 
         private bool DoFilter(object userObject)
@@ -134,19 +138,30 @@ namespace HotelReservations.Windows
                 e.Column.Visibility = Visibility.Collapsed;
             }
 
-            if (e.PropertyName.ToLower() == "password" || e.PropertyName.ToLower() == "maskedpassword")
+            if (e.PropertyName.ToLower() == "password")
             {
-                e.Column.Visibility = Visibility.Collapsed;
-               
-            }
+                DataGridTemplateColumn templateColumn = new DataGridTemplateColumn();
+                templateColumn.Header = e.PropertyName;
 
-            if (e.PropertyName.ToLower() == "maskedpassword")
-            {
-                var maskedPasswordColumn = new DataGridTextColumn();
-                maskedPasswordColumn.Header = "Masked Password";
-                maskedPasswordColumn.Binding = new Binding("MaskedPassword");
-                UsersDG.Columns.Add(maskedPasswordColumn);
+                ICollectionView collectionView = (ICollectionView)UsersDG.ItemsSource;
+                var users = collectionView.Cast<User>();
+                int maxLength = users.Max(u => u.Password.Length);
+
+                FrameworkElementFactory factory = new FrameworkElementFactory(typeof(TextBlock));
+                factory.SetValue(TextBlock.TextProperty, new Binding(e.PropertyName) { Converter = new PasswordConverter(maxLength) });
+
+                DataTemplate cellTemplate = new DataTemplate { VisualTree = factory };
+                templateColumn.CellTemplate = cellTemplate;
+
+                e.Column = templateColumn;
             }
         }
+
+
+
+
+
+
     }
 }
+

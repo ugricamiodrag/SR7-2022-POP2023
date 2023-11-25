@@ -11,5 +11,9 @@ namespace HotelReservations.Repository
     {
         List<Room> Load();
         void Save(List<Room> roomList);
+
+        void SaveRT(List<RoomType> roomTypes);
+
+        List<RoomType> GetRoomTypes();
     }
 }

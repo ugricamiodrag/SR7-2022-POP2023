@@ -51,8 +51,7 @@ namespace HotelReservations.Windows
                 Title = "Add Room";
             }
 
-            // OVE PODATKE PREKO SERVISA, PLS
-            var roomTypes = Hotel.GetInstance().RoomTypes;
+            var roomTypes = roomService.GetAllRoomTypes();
             RoomTypesCB.ItemsSource = roomTypes;
         }
 

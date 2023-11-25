@@ -1,0 +1,26 @@
+﻿<Window x:Class="HotelReservations.Windows.RoomTypesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotelReservations.Windows"
+        mc:Ignorable="d"
+        Title="RoomTypesWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="0">
+            <Button Name="AddBtn" Content="Add" BorderBrush="LightGray" Click="AddBtn_Click"/>
+            <Button Name="EditBtn" Content="Edit" BorderBrush="LightGray" Margin="5,0,0,0"  Click="EditBtn_Click" />
+        </ToolBar>
+
+     
+
+        <DataGrid Name="RoomTypesDG" Grid.Row="1" 
+           IsReadOnly="True" SelectionUnit="FullRow"/>
+
+    </Grid>
+</Window>
