@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HotelReservations.Model;
 using HotelReservations.Service;
 
 namespace HotelReservations.Windows
@@ -47,12 +48,38 @@ namespace HotelReservations.Windows
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
+            var addRoomTypeWindow = new AddEditRoomType();
 
+            Hide();
+            if (addRoomTypeWindow.ShowDialog() == true)
+            {
+                FillData();
+            }
+            Show();
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
+            var selectedRoomType = (RoomType)view.CurrentItem;
 
+            if (selectedRoomType != null)
+            {
+                var editRoomTypeWindow = new AddEditRoomType(selectedRoomType);
+
+                Hide();
+
+                if (editRoomTypeWindow.ShowDialog() == true)
+                {
+                    FillData();
+                }
+
+                Show();
+            }
+            else
+            {
+                MessageBox.Show("You didn't pick a room.");
+                return;
+            }
         }
 
        

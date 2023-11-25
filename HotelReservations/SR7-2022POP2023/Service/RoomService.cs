@@ -90,6 +90,33 @@ namespace HotelReservations.Service
             return Hotel.GetInstance().RoomTypes.FirstOrDefault(rt => rt.Name == roomTypeName)!;
         }
 
-      
+
+        public void SaveRoomType(RoomType roomType)
+        {
+            if (roomType.Id == 0)
+            {
+                roomType.Id = GetNextIdValueForRT();
+                Hotel.GetInstance().RoomTypes.Add(roomType);
+            }
+            else
+            {
+                var index = Hotel.GetInstance().RoomTypes.FindIndex(r => r.Id == roomType.Id);
+                Hotel.GetInstance().RoomTypes[index] = roomType;
+            }
+        }
+
+        public int GetNextIdValueForRT()
+        {
+            if (Hotel.GetInstance().RoomTypes.Any())
+            {
+                return Hotel.GetInstance().RoomTypes.Max(r => r.Id) + 1;
+            }
+            else
+            {
+
+                return 1;
+            }
+        }
+
     }
 }

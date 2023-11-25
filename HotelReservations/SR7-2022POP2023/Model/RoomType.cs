@@ -28,5 +28,13 @@ namespace HotelReservations.Model
         {
             return Name;
         }
+
+        public RoomType Clone()
+        {
+            RoomType r = new RoomType();
+            r.Id = Id;
+            r.Name = Name;
+            return r;
+        }
     }
 }
