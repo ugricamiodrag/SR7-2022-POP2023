@@ -7,6 +7,22 @@
         mc:Ignorable="d"
         Title="Reservations" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="0">
+            <Button Name="AddBtn" Content="Add New Reservation" BorderBrush="LightGray" Click="AddBtn_Click"/>
+            <Button Name="EditBtn" Content="Edit " BorderBrush="LightGray" Margin="5,0,0,0"  Click="EditBtn_Click" />
+            <Button Name="DeleteBtn" Content="Delete" BorderBrush="LightGray" Margin="5,0,0,0" Click="DeleteBtn_Click"/>
+        </ToolBar>
+
         
+
+        <DataGrid Name="ReservationDG" Grid.Row="1" 
+          IsReadOnly="True" AutoGeneratingColumn="ReservationDG_AutoGeneratingColumn" SelectionUnit="FullRow"/>
+
+
     </Grid>
 </Window>

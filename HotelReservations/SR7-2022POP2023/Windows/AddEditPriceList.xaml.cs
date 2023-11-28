@@ -25,16 +25,20 @@ namespace HotelReservations.Windows
         private PriceListService plService = new PriceListService();
         Price contextPrice;
 
+        public bool isEditing;
+
         public AddEditPriceList(Price? price = null)
         {
             
             if (price == null)
             {
                 contextPrice = new Price();
+                isEditing = false;
             }
             else
             {
                 contextPrice = price;
+                isEditing = true;
             }
 
 
@@ -70,14 +74,12 @@ namespace HotelReservations.Windows
                 return;
             }
 
-            var allRoomTypes = plService.roomTypesFromPriceList();
-            var allReservationTypes = plService.roomReservationTypeFromPriceList();
-            if (allRoomTypes.Contains(contextPrice.RoomType) && allReservationTypes.Contains(contextPrice.ReservationType))
+            if (isEditing == false && plService.DoesPriceExistForRoomAndReservationType(contextPrice))
             {
-                MessageBox.Show("There are already prices for this type of room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("There is already a price for this type of room and reservation.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            
+
 
             plService.SavePrice(contextPrice);
 

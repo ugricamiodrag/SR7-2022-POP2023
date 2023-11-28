@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HotelReservations.Model;
+
+namespace HotelReservations.Service
+{
+    public class ReservationService
+    {
+        public List<Reservation> getAllReservations()
+        {
+            return Hotel.GetInstance().Reservations;
+        }
+
+        public void SaveReservation(Reservation reservation)
+        {
+            if (reservation.Id == 0)
+            {
+                reservation.Id = GetNextIdValue();
+                Hotel.GetInstance().Reservations.Add(reservation);
+            }
+            else
+            {
+                var index = Hotel.GetInstance().Reservations.FindIndex(r => r.Id == reservation.Id);
+                Hotel.GetInstance().Reservations[index] = reservation;
+            }
+        }
+
+        public int GetNextIdValue()
+        {
+            if (Hotel.GetInstance().Reservations.Any())
+            {
+                return Hotel.GetInstance().Reservations.Max(r => r.Id) + 1;
+            }
+            else
+            {
+
+                return 1;
+            }
+        }
+
+
+    }
+}

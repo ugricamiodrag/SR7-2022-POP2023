@@ -1,0 +1,205 @@
+﻿<Window x:Class="HotelReservations.Windows.AddEditReservation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotelReservations.Windows"
+        mc:Ignorable="d"
+        Title="AddEditReservation" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel
+    Grid.Row="1"
+    Grid.Column="1"
+    Orientation="Vertical"
+    >
+            <StackPanel Orientation="Horizontal">
+                <Label 
+            Height="30"
+            Width="150"
+            Content="Room:"
+            Margin="0,0,0,15"
+            ></Label>
+                <TextBox 
+            Name="RoomTB"
+            Height="30"
+            Width="150"
+            VerticalContentAlignment="Center"
+            Margin="0,0,0,15"
+            Text="{Binding Path=RoomId, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}"
+                    IsReadOnly="True"
+                    
+                    >
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+                <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,5,15,15" Name="btnPickRoom" VerticalAlignment="Top" Width="43" Click="btnPickRoom_Click" />
+                <Label Content="*" />
+            </StackPanel>
+
+
+
+            <StackPanel Orientation="Horizontal">
+                <Label 
+                    Height="30"
+                    Width="150"
+                    Content="Reservation type:"
+                    Margin="0,0,0,15"
+                    ></Label>
+                                <TextBox 
+                    Name="ReservationTB"
+                    Height="30"
+                    Width="150"
+                    VerticalContentAlignment="Center"
+                                    IsReadOnly="True"
+                    Margin="0,0,0,15"
+                    Text="{Binding Path=ReservationType, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+       
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label
+            Height="30"
+            Width="150"
+            Content="Guests:"
+            ></Label>
+                <DataGrid AutoGeneratingColumn="dgGuests_AutoGeneratingColumn" Height="100" HorizontalAlignment="Left" Margin="0,0,0,15
+                          " Name="dgGuests" VerticalAlignment="Top" Width="150" IsReadOnly="True" />
+
+                <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,27,0,0" Name="btnPickGuests" VerticalAlignment="Top" Width="43" Click="btnPickGuests_Click" />
+                <Label Content="*" Margin="15,27,0,0" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label 
+                    Height="30"
+                    Width="150"
+                    Content="Start date:"
+                    Margin="0,0,0,15"
+                    ></Label>
+                                    <TextBox 
+                                        IsReadOnly="True"
+                    Name="SDateTB"
+                    Height="30"
+                    Width="150"
+                    VerticalContentAlignment="Center"
+                    Margin="0,0,0,15"
+                    Text="{Binding Path=StartDateTime, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+                <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,5,15,15" Name="btnStartDate" VerticalAlignment="Top" Width="43" Click="btnStartDate_Click" />
+                <Label Content="*" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label 
+        Height="30"
+        Width="150"
+        Content="End date:"
+        Margin="0,0,0,15"
+        ></Label>
+                <TextBox 
+                    
+                    IsReadOnly="True"
+        Name="EDateTB"
+        Height="30"
+        Width="150"
+        VerticalContentAlignment="Center"
+        Margin="0,0,0,15"
+        Text="{Binding Path=EndDateTime, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+                <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,5,15,15" Name="btnEndDate" VerticalAlignment="Top" Width="43" Click="btnEndDate_Click" />
+                <Label Content="*" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label 
+        Height="30"
+        Width="150"
+        Content="Total Price:"
+        Margin="0,0,0,15"
+        ></Label>
+                <TextBox 
+                    
+                    IsReadOnly="True"
+        Name="TotalPriceTB"
+        Height="30"
+        Width="150"
+        VerticalContentAlignment="Center"
+        Margin="0,0,0,15"
+        Text="{Binding Path=ReservationType, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                    <Validation.ErrorTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <AdornedElementPlaceholder/>
+                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Validation.ErrorTemplate>
+                </TextBox>
+
+            </StackPanel>
+
+        </StackPanel>
+        <StackPanel
+    Grid.Row="3" Grid.Column="2"
+    Orientation="Horizontal"
+    FlowDirection="RightToLeft"
+    >
+            <Button 
+        Name="SaveBtn"
+        Content="Save"
+        Width="80"
+        Height="30"
+        Margin="5,0,5,0"
+        Click="SaveBtn_Click"
+        />
+            <Button 
+        Name="CancelBtn"
+        Content="Cancel"
+        Width="80"
+        Height="30"
+        Click="CancelBtn_Click"
+        />
+        </StackPanel>
+    </Grid>
+</Window>

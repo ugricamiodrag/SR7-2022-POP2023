@@ -38,6 +38,9 @@ namespace HotelReservations
                     var loadedUsers = userRepository.Load();
                     IPriceListRepository priceListRepository = new PriceListRepository();
                     var loadedPrices = priceListRepository.Load();
+                    IReservationRepository reservationRepository = new ReservationRepository();
+                    var loadedReservation = reservationRepository.Load();
+
 
 
                     if (loadedRooms != null)
@@ -59,6 +62,12 @@ namespace HotelReservations
                     {
                         Hotel.GetInstance().PriceList = loadedPrices;
                     }
+
+                    if (loadedReservation != null)
+                    {
+                        Hotel.GetInstance().Reservations = loadedReservation;
+                    }
+
                 }
                 else
                 {
@@ -97,6 +106,9 @@ namespace HotelReservations
 
                 IPriceListRepository priceListRepository = new PriceListRepository();
                 priceListRepository.Save(Hotel.GetInstance().PriceList);
+
+                IReservationRepository reservationRepository = new ReservationRepository();
+                reservationRepository.Save(Hotel.GetInstance().Reservations);
 
 
                 //BinaryRoomRepository binaryRoomRepository = new BinaryRoomRepository();

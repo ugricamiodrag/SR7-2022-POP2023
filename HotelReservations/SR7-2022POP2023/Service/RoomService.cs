@@ -85,10 +85,21 @@ namespace HotelReservations.Service
 
         }
 
-        public RoomType GetRoomTypeByName(string roomTypeName)
+        public RoomType GetRoomTypeById(int id)
         {
-            return Hotel.GetInstance().RoomTypes.FirstOrDefault(rt => rt.Name == roomTypeName)!;
+           var rooms = GetAllRooms();
+           foreach (var room in rooms)
+            {
+                if (room.Id == id)
+                {
+                    return room.RoomType;
+                }
+            }
+            return null;
         }
+
+       
+
 
 
         public void SaveRoomType(RoomType roomType)

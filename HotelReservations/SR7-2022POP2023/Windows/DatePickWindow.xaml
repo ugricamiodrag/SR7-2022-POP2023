@@ -1,0 +1,17 @@
+﻿<Window x:Class="HotelReservations.Windows.DatePickWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotelReservations.Windows"
+        mc:Ignorable="d"
+        Title="DatePickWindow" Height="450" Width="450">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DatePicker Grid.Row="1" Name="datePicker1" Width="120" Language="en" Margin="170, 200, 150, 200" HorizontalAlignment="Center" SelectedDateChanged="datePicker1_SelectedDateChanged"/>
+    </Grid>
+</Window>

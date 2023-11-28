@@ -53,26 +53,10 @@ namespace HotelReservations.Service
 
         public List<ReservationType> reservationTypes = new List<ReservationType>() { ReservationType.Day, ReservationType.Night};
 
-        public List<RoomType> roomTypesFromPriceList()
+        public bool DoesPriceExistForRoomAndReservationType(Price contextPrice)
         {
             var allPrices = GetAllPrices();
-            List<RoomType> roomTypes = new List<RoomType>();
-            foreach (var price in allPrices)
-            {
-                roomTypes.Add(price.RoomType);
-            }
-            return roomTypes;
-        }
-
-        public List<ReservationType> roomReservationTypeFromPriceList()
-        {
-            var allPrices = GetAllPrices();
-            List<ReservationType> reservationTypes = new List<ReservationType>();
-            foreach (var price in allPrices)
-            {
-                reservationTypes.Add(price.ReservationType);
-            }
-            return reservationTypes;
+            return allPrices.Any(price => price.RoomType == contextPrice.RoomType && price.ReservationType == contextPrice.ReservationType);
         }
 
 

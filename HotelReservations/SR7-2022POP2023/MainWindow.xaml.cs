@@ -61,11 +61,13 @@ namespace HotelReservations
                 if (user.UserType.Equals("Receptionist"))
                 {
                     AdministratorGeneral.Visibility = Visibility.Collapsed;
+                    ReceptionistGeneral.Visibility = Visibility.Visible;
 
                 }
                 else
                 {
                     ReceptionistGeneral.Visibility = Visibility.Collapsed;
+                    AdministratorGeneral.Visibility = Visibility.Visible;
                 }
                 MessageBox.Show("Successful login.", "Verification successful", MessageBoxButton.OK, MessageBoxImage.Information);
 

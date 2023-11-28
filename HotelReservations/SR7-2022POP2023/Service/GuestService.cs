@@ -59,5 +59,12 @@ namespace HotelReservations.Service
         {
             return $"{name.Substring(0, 1)}{surname.Substring(0, 1)}-{id:D5}";
         }
+
+        public Guest GetGuestById(int id)
+        {
+            var guests = GetAllActiveGuests();
+            return guests.Find(g => g.Id == id);
+        }
+
     }
 }

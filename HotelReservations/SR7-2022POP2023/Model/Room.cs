@@ -46,7 +46,7 @@ namespace HotelReservations.Model
         public override string ToString()
         {
             //return "Room number: " + RoomNumber; // ...
-            return $"Room number: {RoomNumber}";
+            return $"Room number: {RoomNumber} \nHas TV: {HasTV} \nHas Mini Bar: {HasMiniBar} \nRoom type: {roomType}";
         }
 
 

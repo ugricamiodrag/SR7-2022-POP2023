@@ -52,6 +52,12 @@ namespace HotelReservations.Model
 
 
         }
+
+        public override string ToString()
+        {
+            return $"Name: {Name} \nSurname: {Surname} \nID Number: {IDNumber}";
+        }
+
     }
 
     
