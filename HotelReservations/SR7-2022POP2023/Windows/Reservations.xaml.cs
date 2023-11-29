@@ -93,7 +93,7 @@ namespace HotelReservations.Windows
             }
             else
             {
-                MessageBox.Show("You didn't pick a guest.");
+                MessageBox.Show("You didn't pick a reservation.");
             }
         }
 

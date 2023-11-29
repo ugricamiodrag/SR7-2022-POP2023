@@ -27,23 +27,55 @@ namespace HotelReservations.Windows
         private GuestService guestService = new GuestService();
         private PriceListService priceListService = new PriceListService();
         private RoomService roomService = new RoomService();
-      
+
 
         public AddEditReservation(Reservation? reservation = null)
         {
+            InitializeComponent();
+
             if (reservation == null)
             {
-                contextReservation = new Reservation();
+                AdjustWindow(reservation);
             }
             else
             {
                 contextReservation = reservation.Clone();
+                PopulateFieldsFromReservation(contextReservation);
+                AdjustWindow(reservation);
             }
 
-            AdjustWindow(reservation);
-
-            InitializeComponent();
+            this.DataContext = contextReservation;
         }
+
+
+        private void PopulateFieldsFromReservation(Reservation reservation)
+        {
+            if (reservation != null)
+            {
+                if (reservation.RoomId != null)
+                {
+                    RoomTB.Text = reservation.RoomId.ToString();
+                }
+                else
+                {
+                   
+                    MessageBox.Show("RoomId is null in the reservation data.");
+                    RoomTB.Text = string.Empty;
+                }
+                ReservationTB.Text = reservation.ReservationType.ToString();
+                dgGuests.ItemsSource = reservation.Guests;
+                SDateTB.Text = reservation.StartDateTime.ToString("dd/MM/yyyy");
+                EDateTB.Text = reservation.EndDateTime.ToString("dd/MM/yyyy");
+                TotalPriceTB.Text = reservation.TotalPrice.ToString();
+            }
+            else
+            {
+         
+                MessageBox.Show("Reservation data is empty.");
+            }
+        }
+
+
 
         public void AdjustWindow(Reservation reservation)
         {
@@ -110,7 +142,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                SDateTB.Text = selectedDate.ToShortDateString();
+                SDateTB.Text = selectedDate.ToString("dd/MM/yyyy");
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -123,7 +155,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                EDateTB.Text = selectedDate.ToShortDateString();
+                EDateTB.Text = selectedDate.ToString("dd/MM/yyyy");
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -185,38 +217,58 @@ namespace HotelReservations.Windows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            int roomId = int.Parse(RoomTB.Text);
-
-            if (Enum.TryParse(ReservationTB.Text, out ReservationType reservationType))
+            if (!string.IsNullOrEmpty(RoomTB.Text) &&
+                !string.IsNullOrEmpty(ReservationTB.Text) &&
+                dgGuests.ItemsSource != null &&
+                !string.IsNullOrEmpty(SDateTB.Text) &&
+                !string.IsNullOrEmpty(EDateTB.Text) &&
+                !string.IsNullOrEmpty(TotalPriceTB.Text))
             {
-                List<Model.Guest> selectedGuests = (List<Model.Guest>)dgGuests.ItemsSource;
-                DateTime startDateTime = DateTime.Parse(SDateTB.Text);
-                DateTime endDateTime = DateTime.Parse(EDateTB.Text);
-                double totalPrice = double.Parse(TotalPriceTB.Text);
-                bool isActive = true;
-
-                Reservation reservation = new Reservation()
+                int roomId = int.Parse(RoomTB.Text);
+                MessageBox.Show(ReservationTB.Text);
+                if (Enum.TryParse(ReservationTB.Text, out ReservationType reservationType))
                 {
-                    RoomId = roomId,
-                    ReservationType = reservationType,
-                    Guests = selectedGuests,
-                    StartDateTime = startDateTime,
-                    EndDateTime = endDateTime,
-                    TotalPrice = totalPrice,
-                    IsActive = isActive
-                };
-                reservationService.SaveReservation(reservation);
-                DialogResult = true;
-                Close();
+                    string dateFormat = "dd.MM.yyyy"; 
+
+                    if (double.TryParse(TotalPriceTB.Text, out double totalPrice) &&
+                        DateTime.TryParseExact(SDateTB.Text, dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime startDateTime) &&
+                        DateTime.TryParseExact(EDateTB.Text, dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime endDateTime))
+                    {
+                        List<Model.Guest> selectedGuests = (List<Model.Guest>)dgGuests.ItemsSource;
+                        bool isActive = true;
+
+                        Reservation reservation = new Reservation()
+                        {
+                            RoomId = roomId,
+                            ReservationType = reservationType,
+                            Guests = selectedGuests,
+                            StartDateTime = startDateTime,
+                            EndDateTime = endDateTime,
+                            TotalPrice = totalPrice,
+                            IsActive = isActive
+                        };
+
+                        reservationService.SaveReservation(reservation);
+                        DialogResult = true;
+                        Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid date or total price format");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Reservation Type");
+                }
             }
             else
             {
-                MessageBox.Show("Invalid Reservation Type");
+                MessageBox.Show("The field(s) can't be empty.");
             }
-
-            
-
         }
+
+
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {

@@ -33,7 +33,7 @@
             Margin="0,0,0,15"
             ></Label>
                 <TextBox 
-            Name="RoomTB"
+            x:Name="RoomTB"
             Height="30"
             Width="150"
             VerticalContentAlignment="Center"
@@ -166,7 +166,7 @@
         Width="150"
         VerticalContentAlignment="Center"
         Margin="0,0,0,15"
-        Text="{Binding Path=ReservationType, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+        Text="{Binding Path=TotalPrice, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
                     <Validation.ErrorTemplate>
                         <ControlTemplate>
                             <StackPanel>

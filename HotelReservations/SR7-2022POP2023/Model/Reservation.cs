@@ -16,19 +16,20 @@ namespace HotelReservations.Model
         public DateTime EndDateTime { get; set; }
         public double TotalPrice { get; set; }
         public bool IsActive { get; set; } = true;
-        
+
         public Reservation Clone()
         {
             Reservation reservation = new Reservation();
             reservation.Id = Id;
             reservation.RoomId = RoomId;
             reservation.ReservationType = ReservationType;
-            reservation.Guests = Guests;
+            reservation.Guests = Guests != null ? new List<Guest>(Guests) : null;
             reservation.StartDateTime = StartDateTime;
             reservation.EndDateTime = EndDateTime;
             reservation.TotalPrice = TotalPrice;
             reservation.IsActive = IsActive;
             return reservation;
         }
+
     }
 }

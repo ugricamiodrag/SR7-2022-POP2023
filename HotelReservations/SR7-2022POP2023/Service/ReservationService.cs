@@ -11,7 +11,16 @@ namespace HotelReservations.Service
     {
         public List<Reservation> getAllReservations()
         {
-            return Hotel.GetInstance().Reservations;
+            var res = Hotel.GetInstance().Reservations;
+            List<Reservation> all = new List<Reservation>();
+            foreach (Reservation reservation in res)
+            {
+                if (reservation.IsActive == true)
+                {
+                    all.Add(reservation);
+                }
+            }
+            return all;
         }
 
         public void SaveReservation(Reservation reservation)
