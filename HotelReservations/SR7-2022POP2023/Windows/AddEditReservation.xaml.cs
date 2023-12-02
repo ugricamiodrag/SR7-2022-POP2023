@@ -38,6 +38,7 @@ namespace HotelReservations.Windows
             {
                 AdjustWindow(reservation);
                 contextReservation = new Reservation();
+                RestartFields();
             }
             else
             {
@@ -45,9 +46,20 @@ namespace HotelReservations.Windows
                 PopulateFieldsFromReservation(contextReservation);
                 AdjustWindow(reservation);
             }
+            
+
 
             this.DataContext = contextReservation;
         }
+
+        private void RestartFields()
+        {
+            contextReservation.RoomId = -1;
+            contextReservation.StartDateTime = DateTime.Now;
+            contextReservation.EndDateTime = DateTime.Now;
+        }
+
+
 
 
         private void PopulateFieldsFromReservation(Reservation reservation)
