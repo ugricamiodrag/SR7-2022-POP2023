@@ -102,14 +102,14 @@
                     Content="Start date:"
                     Margin="0,0,0,15"
                     ></Label>
-                                    <TextBox 
-                                        IsReadOnly="True"
-                    Name="SDateTB"
-                    Height="30"
-                    Width="150"
-                    VerticalContentAlignment="Center"
-                    Margin="0,0,0,15"
-                    Text="{Binding Path=StartDateTime, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+                <TextBox 
+    IsReadOnly="True"
+    Name="SDateTB"
+    Height="30"
+    Width="150"
+    VerticalContentAlignment="Center"
+    Margin="0,0,0,15"
+    Text="{Binding Path=StartDateTime, StringFormat=dd/MM/yyyy hh:mm:ss tt, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
                     <Validation.ErrorTemplate>
                         <ControlTemplate>
                             <StackPanel>
@@ -130,14 +130,13 @@
         Margin="0,0,0,15"
         ></Label>
                 <TextBox 
-                    
-                    IsReadOnly="True"
-        Name="EDateTB"
-        Height="30"
-        Width="150"
-        VerticalContentAlignment="Center"
-        Margin="0,0,0,15"
-        Text="{Binding Path=EndDateTime, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+    IsReadOnly="True"
+    Name="EDateTB"
+    Height="30"
+    Width="150"
+    VerticalContentAlignment="Center"
+    Margin="0,0,0,15"
+    Text="{Binding Path=EndDateTime, StringFormat=dd/MM/yyyy hh:mm:ss tt, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
                     <Validation.ErrorTemplate>
                         <ControlTemplate>
                             <StackPanel>

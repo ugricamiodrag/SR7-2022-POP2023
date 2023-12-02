@@ -50,6 +50,18 @@ namespace HotelReservations.Service
             }
         }
 
-
+        public List<Reservation> GetReservationsForRoom(int roomId)
+        {
+            List<Reservation> reservations = new List<Reservation>();
+            List<Reservation> all = getAllReservations();
+            foreach (Reservation reservation in all)
+            {
+                if (reservation.RoomId == roomId)
+                {
+                    reservations.Add(reservation);
+                }
+            }
+            return reservations;
+        }
     }
 }

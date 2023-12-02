@@ -29,11 +29,11 @@ namespace HotelReservations.Windows
             InitializeComponent();
             FillData();
         }
-
         private void FillData()
         {
             var resService = new ReservationService();
             var allRes = resService.getAllReservations();
+
             view = CollectionViewSource.GetDefaultView(allRes);
             ReservationDG.ItemsSource = null;
             ReservationDG.ItemsSource = view;
@@ -103,9 +103,33 @@ namespace HotelReservations.Windows
             {
                 e.Column.Visibility = Visibility.Collapsed;
             }
+
+            if (e.PropertyName == "Guests")
+            {
+                e.Column.Visibility = Visibility.Collapsed;
+
+                var existingGuestsColumns = ReservationDG.Columns.Where(c => c.Header.ToString() == "All guests").ToList();
+                foreach (var column in existingGuestsColumns)
+                {
+                    ReservationDG.Columns.Remove(column);
+                }
+
+                DataGridTemplateColumn guestsColumn = new DataGridTemplateColumn();
+                guestsColumn.Header = "All guests";
+
+                FrameworkElementFactory textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
+                textBlockFactory.SetBinding(TextBlock.TextProperty, new Binding("Guests") { Converter = new GuestListConverter() });
+
+                DataTemplate dataTemplate = new DataTemplate();
+                dataTemplate.VisualTree = textBlockFactory;
+
+                guestsColumn.CellTemplate = dataTemplate;
+                ReservationDG.Columns.Add(guestsColumn);
+            }
         }
 
-        
+
+
     }
 }
 

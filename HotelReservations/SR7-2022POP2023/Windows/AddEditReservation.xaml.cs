@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace HotelReservations.Windows
             if (reservation == null)
             {
                 AdjustWindow(reservation);
+                contextReservation = new Reservation();
             }
             else
             {
@@ -64,8 +66,8 @@ namespace HotelReservations.Windows
                 }
                 ReservationTB.Text = reservation.ReservationType.ToString();
                 dgGuests.ItemsSource = reservation.Guests;
-                SDateTB.Text = reservation.StartDateTime.ToString("dd/MM/yyyy");
-                EDateTB.Text = reservation.EndDateTime.ToString("dd/MM/yyyy");
+                SDateTB.Text = reservation.StartDateTime.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
+                EDateTB.Text = reservation.EndDateTime.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
                 TotalPriceTB.Text = reservation.TotalPrice.ToString();
             }
             else
@@ -142,7 +144,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                SDateTB.Text = selectedDate.ToString("dd/MM/yyyy");
+                SDateTB.Text = selectedDate.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -155,7 +157,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                EDateTB.Text = selectedDate.ToString("dd/MM/yyyy");
+                EDateTB.Text = selectedDate.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -165,45 +167,56 @@ namespace HotelReservations.Windows
 
         private void CalculateTheTotalPrice(string text1, string text2)
         {
-            if (!string.IsNullOrEmpty(text1) && !string.IsNullOrEmpty(text2)) {
+            if (!string.IsNullOrEmpty(text1) && !string.IsNullOrEmpty(text2))
+            {
+                DateTime startDate, endDate;
 
-                var startDate = DateTime.Parse(text1);
-                var endDate = DateTime.Parse(text2);
-                var sk = endDate - startDate;
-                int difference = (int)sk.Days;
-                int id = GetRoomId();
-                List<Price> price = new List<Price>();
-                if (difference > 1)
+                string dateFormat = "dd/MM/yyyy hh:mm:ss tt";
+
+                if (DateTime.TryParseExact(text1, dateFormat, new System.Globalization.CultureInfo("en-US"), DateTimeStyles.None, out startDate) &&
+                    DateTime.TryParseExact(text2, dateFormat, new System.Globalization.CultureInfo("en-US"), DateTimeStyles.None, out endDate))
                 {
-                    var roomType = roomService.GetRoomTypeById(id);
-                    ReservationType resType = ReservationType.Night;
-                    price = GetPricesForRoomType(roomType, resType);
-                    ReservationTB.Text = resType.ToString();
-                }
-                else if (difference > 0)
-                {
-                    var roomType = roomService.GetRoomTypeById(id);
-                    ReservationType resType = ReservationType.Day;
-                    price = GetPricesForRoomType(roomType, resType);
-                    ReservationTB.Text = resType.ToString();
+                    var sk = endDate - startDate;
+                    int difference = (int)sk.TotalDays;
+                    int id = GetRoomId();
+                    List<Price> price = new List<Price>();
+
+                    if (difference > 1)
+                    {
+                        var roomType = roomService.GetRoomTypeById(id);
+                        ReservationType resType = ReservationType.Night;
+                        price = GetPricesForRoomType(roomType, resType);
+                        ReservationTB.Text = resType.ToString();
+                    }
+                    else if (difference > 0)
+                    {
+                        var roomType = roomService.GetRoomTypeById(id);
+                        ReservationType resType = ReservationType.Day;
+                        price = GetPricesForRoomType(roomType, resType);
+                        ReservationTB.Text = resType.ToString();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Pick the right dates.");
+                    }
+
+                    double priceValue = 1;
+
+                    foreach (var priceElement in price)
+                    {
+                        priceValue = priceElement.PriceValue;
+                    }
+
+                    var totalPrice = priceValue * difference;
+                    TotalPriceTB.Text = totalPrice.ToString();
                 }
                 else
                 {
-                    MessageBox.Show("Pick the right dates.");
+                    MessageBox.Show("Invalid date format. Please provide dates in the correct format.");
                 }
-                double priceValue = 1;
-
-                foreach(var priceElement in price)
-                {
-                    priceValue = priceElement.PriceValue;
-                }
-
-                var totalPrice = priceValue * difference;
-                TotalPriceTB.Text = totalPrice.ToString();
-
-
             }
         }
+
 
         private List<Price> GetPricesForRoomType(RoomType roomType, ReservationType reservationType)
         {
@@ -225,32 +238,41 @@ namespace HotelReservations.Windows
                 !string.IsNullOrEmpty(TotalPriceTB.Text))
             {
                 int roomId = int.Parse(RoomTB.Text);
-                MessageBox.Show(ReservationTB.Text);
                 if (Enum.TryParse(ReservationTB.Text, out ReservationType reservationType))
                 {
-                    string dateFormat = "dd.MM.yyyy"; 
+                    string dateFormat = "dd/MM/yyyy hh:mm:ss tt";
 
                     if (double.TryParse(TotalPriceTB.Text, out double totalPrice) &&
-                        DateTime.TryParseExact(SDateTB.Text, dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime startDateTime) &&
-                        DateTime.TryParseExact(EDateTB.Text, dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime endDateTime))
+                        DateTime.TryParseExact(SDateTB.Text, dateFormat, new System.Globalization.CultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out DateTime startDateTime) &&
+                        DateTime.TryParseExact(EDateTB.Text, dateFormat, new System.Globalization.CultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out DateTime endDateTime))
                     {
                         List<Model.Guest> selectedGuests = (List<Model.Guest>)dgGuests.ItemsSource;
-                        bool isActive = true;
+                        bool roomAvailable = CheckRoomAvailability(roomId, startDateTime, endDateTime);
 
-                        Reservation reservation = new Reservation()
+                        if (!roomAvailable)
                         {
-                            RoomId = roomId,
-                            ReservationType = reservationType,
-                            Guests = selectedGuests,
-                            StartDateTime = startDateTime,
-                            EndDateTime = endDateTime,
-                            TotalPrice = totalPrice,
-                            IsActive = isActive
-                        };
+                            MessageBox.Show("Room is already booked for this period.");
+                            return;
+                        }
 
-                        reservationService.SaveReservation(reservation);
-                        DialogResult = true;
-                        Close();
+                        if (contextReservation != null) 
+                        {
+
+                            contextReservation.RoomId = roomId;
+                            contextReservation.ReservationType = reservationType;
+                            contextReservation.Guests = selectedGuests;
+                            contextReservation.StartDateTime = startDateTime;
+                            contextReservation.EndDateTime = endDateTime;
+                            contextReservation.TotalPrice = totalPrice;
+
+                            reservationService.SaveReservation(contextReservation);
+                            DialogResult = true;
+                            Close();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid Reservation Type");
+                        }
                     }
                     else
                     {
@@ -266,6 +288,19 @@ namespace HotelReservations.Windows
             {
                 MessageBox.Show("The field(s) can't be empty.");
             }
+        }
+
+        private bool CheckRoomAvailability(int roomId, DateTime startDateTime, DateTime endDateTime)
+        {
+            List<Reservation> reservationsForRoom = reservationService.GetReservationsForRoom(roomId);
+
+            bool roomAvailable = reservationsForRoom.All(reservation =>
+            {
+                bool overlaps = (startDateTime < reservation.EndDateTime) && (endDateTime > reservation.StartDateTime);
+                return !overlaps;
+            });
+
+            return roomAvailable;
         }
 
 

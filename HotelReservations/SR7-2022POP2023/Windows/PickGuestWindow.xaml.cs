@@ -38,16 +38,23 @@ namespace HotelReservations.Windows
 
         private void GuestListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-  
+            foreach (Model.Guest selectedGuest in e.RemovedItems)
+            {
+                selectedGuests.RemoveAll(guest => guest.Id == selectedGuest.Id);
+            }
 
-            foreach(Model.Guest selectedGuest in GuestListBox.SelectedItems)
+            foreach (Model.Guest selectedGuest in e.AddedItems)
             {
                 if (!selectedGuests.Any(guest => guest.Id == selectedGuest.Id))
                 {
                     selectedGuests.Add(selectedGuest);
                 }
             }
+
+           
+            GuestDetailsTextBox.Text = string.Join(Environment.NewLine, selectedGuests.Select(guest => guest.ToString()));
         }
+
 
         public Action<string> GuestIdSetter { get; set; }
 
