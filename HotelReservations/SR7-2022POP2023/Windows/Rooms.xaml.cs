@@ -24,6 +24,7 @@ namespace HotelReservations.Windows
         public partial class Rooms : Window
         {
             private ICollectionView view;
+            private RoomService roomService = new RoomService();
             public Rooms()
             {
                 InitializeComponent();
@@ -112,6 +113,11 @@ namespace HotelReservations.Windows
         {
 
             var roomToDelete = (Room)RoomsDG.SelectedItem;
+            if (roomService.ReservationExistsForRoom(roomToDelete) == true)
+            {
+                MessageBox.Show("You can't pick the room.", "Not allowed", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             if (roomToDelete != null)
             {
                 var decision = MessageBox.Show($"Do you want to delete the room with number {roomToDelete.RoomNumber}", "Deleting a room", MessageBoxButton.YesNo, MessageBoxImage.Question);

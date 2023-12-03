@@ -11,6 +11,7 @@ namespace HotelReservations.Service
     public class RoomService
     {
         IRoomRepository roomRepository;
+        private ReservationService reservationService = new ReservationService();
         public RoomService() 
         { 
             roomRepository = new RoomRepository();
@@ -99,7 +100,15 @@ namespace HotelReservations.Service
 
         }
 
-
+        public bool ReservationExistsForRoom(Room room)
+        {
+            var reservations = reservationService.GetReservationsForRoom(room.Id);
+            if (reservations.Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
        
 
 

@@ -80,5 +80,7 @@ namespace HotelReservations.Service
 
             return reservationsForRoomType;
         }
+
+       
     }
 }

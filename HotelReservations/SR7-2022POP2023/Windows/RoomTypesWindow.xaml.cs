@@ -85,6 +85,7 @@ namespace HotelReservations.Windows
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             var selectedRoomType = (RoomType)view.CurrentItem;
+
             if (selectedRoomType != null)
             {
                 var decision = MessageBox.Show($"Do you want to delete the room type - {selectedRoomType.Name}", "Deleting a room", MessageBoxButton.YesNo, MessageBoxImage.Question);
