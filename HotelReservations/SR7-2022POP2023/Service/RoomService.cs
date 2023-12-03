@@ -84,23 +84,23 @@ namespace HotelReservations.Service
             return roomTypes;
 
         }
-
         public List<RoomType> GetAllActiveRoomTypes()
         {
             List<RoomType> roomTypes = new List<RoomType>();
             var hotel = Hotel.GetInstance().RoomTypes;
             foreach (var type in hotel)
             {
-                if (type.IsActive)
-                {
+                if (type.IsActive) { 
                     roomTypes.Add(type);
                 }
-                
             }
 
             return roomTypes;
 
         }
+
+
+       
 
 
         public RoomType GetRoomTypeById(int id)

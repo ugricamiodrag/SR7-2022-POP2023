@@ -65,11 +65,29 @@ namespace HotelReservations.Windows
                 MessageBox.Show("Fill required fields.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            if(CheckDuplicates(contextRoomType.Name) == true)
+            {
+                MessageBox.Show("Room type already exists.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             roomService.SaveRoomType(contextRoomType);
 
             DialogResult = true;
             Close();
+        }
+
+        private bool CheckDuplicates(string rt)
+        {
+            var rts = roomService.GetAllActiveRoomTypes();
+            foreach (var r in rts)
+            {
+                if (r.Name.ToLower() == rt.ToLower())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)

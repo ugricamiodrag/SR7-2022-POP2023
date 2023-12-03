@@ -51,7 +51,7 @@ namespace HotelReservations.Windows
                 Title = "Add Room";
             }
 
-            var roomTypes = roomService.GetAllRoomTypes();
+            var roomTypes = roomService.GetAllActiveRoomTypes();
             RoomTypesCB.ItemsSource = roomTypes;
         }
 

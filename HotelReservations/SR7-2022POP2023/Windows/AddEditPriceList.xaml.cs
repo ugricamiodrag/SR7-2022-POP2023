@@ -59,7 +59,7 @@ namespace HotelReservations.Windows
             {
                 Title = "Add Price";
             }
-            var roomTypes = roomService.GetAllRoomTypes();
+            var roomTypes = roomService.GetAllActiveRoomTypes();
             RoomTypesCB.ItemsSource = roomTypes;
             var reservationTypes = plService.reservationTypes;
             ReservationTypeCB.ItemsSource = reservationTypes;
