@@ -33,7 +33,7 @@ namespace HotelReservations.Windows
         public void FillData()
         {
             var roomService = new RoomService();
-            var rooms = roomService.GetAllRoomTypes();
+            var rooms = roomService.GetAllActiveRoomTypes();
 
             view = CollectionViewSource.GetDefaultView(rooms);
     
@@ -84,7 +84,49 @@ namespace HotelReservations.Windows
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
+            var selectedRoomType = (RoomType)view.CurrentItem;
+            if (selectedRoomType != null)
+            {
+                var decision = MessageBox.Show($"Do you want to delete the room type - {selectedRoomType.Name}", "Deleting a room", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (decision == MessageBoxResult.Yes)
+                {
+                    var reservationService = new ReservationService();
 
+                var reservationsWithRoomType = reservationService.GetReservationsByRoomType(selectedRoomType);
+
+                if (reservationsWithRoomType.Any())
+                {
+                    MessageBox.Show("This room type is associated with reservations and cannot be deleted.");
+                    return;
+                }
+
+                var priceListService = new PriceListService();
+                var pricesForRoomType = priceListService.GetPricesByRoomType(selectedRoomType);
+
+                foreach (var price in pricesForRoomType)
+                {
+                    price.IsActive = false;
+                    priceListService.SavePrice(price);
+                }
+
+                selectedRoomType.IsActive = false;
+
+                FillData();
+            }
+            }
+            else
+            {
+                MessageBox.Show("You didn't pick a room type.");
+                return;
+            }
+        }
+
+        private void RoomTypesDG_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyName.ToLower() == "IsActive".ToLower())
+            {
+                e.Column.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

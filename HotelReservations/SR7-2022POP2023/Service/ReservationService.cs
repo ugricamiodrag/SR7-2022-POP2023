@@ -63,5 +63,22 @@ namespace HotelReservations.Service
             }
             return reservations;
         }
+
+        public List<Reservation> GetReservationsByRoomType(RoomType roomType)
+        {
+            var roomService = new RoomService(); 
+            var roomsOfType = roomService.GetRoomsByType(roomType); 
+
+            var allReservations = getAllReservations(); 
+            var reservationsForRoomType = new List<Reservation>();
+
+            foreach (var room in roomsOfType)
+            {
+                var reservationsForRoom = allReservations.Where(reservation => reservation.RoomId == room.Id);
+                reservationsForRoomType.AddRange(reservationsForRoom);
+            }
+
+            return reservationsForRoomType;
+        }
     }
 }

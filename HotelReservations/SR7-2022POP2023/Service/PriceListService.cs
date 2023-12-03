@@ -59,6 +59,10 @@ namespace HotelReservations.Service
             return allPrices.Any(price => price.RoomType == contextPrice.RoomType && price.ReservationType == contextPrice.ReservationType);
         }
 
-
+        public List<Price> GetPricesByRoomType(RoomType roomType)
+        {
+            var allPrices = GetAllPrices();
+            return allPrices.Where(price => price.RoomType == roomType).ToList();
+        }
     }
 }

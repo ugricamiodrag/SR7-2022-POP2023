@@ -24,6 +24,8 @@ namespace HotelReservations.Model
             }
                 }
 
+        public bool IsActive { get; set; } = true;
+
         public override string ToString()
         {
             return Name;
