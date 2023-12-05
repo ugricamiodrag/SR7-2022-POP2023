@@ -1,99 +1,132 @@
-﻿using HotelReservations.Model;
-using HotelReservations.Repository;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
-using HotelReservations.Exceptions;
-using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using HotelReservations.Model;
 
-public class ReservationRepository : IReservationRepository
+
+namespace HotelReservations.Repository
 {
-    private string ToCSV(Reservation reservation)
+    public class ReservationRepository : IReservationRepository
     {
-        string guestIDs = string.Join("|", reservation.Guests.Select(guest => guest.Id));
-        return $"{reservation.Id},{reservation.RoomId},{reservation.ReservationType},{guestIDs},{reservation.StartDateTime},{reservation.EndDateTime},{reservation.TotalPrice},{reservation.IsActive}";
-    }
-
-    private Reservation FromCSV(string csv)
-    {
-        string[] parts = csv.Split(',');
-        Reservation reservation = new Reservation();
-        reservation.Id = int.Parse(parts[0]);
-        reservation.RoomId = int.Parse(parts[1]);
-        reservation.ReservationType = (ReservationType)Enum.Parse(typeof(ReservationType), parts[2]);
-
-        string[] guestIDs = parts[3].Split('|');
-        reservation.Guests = new List<Guest>();
-        foreach (var guestID in guestIDs)
+        public int Insert(Reservation reservation)
         {
-            int id = int.Parse(guestID);
-            Guest guest = GetGuestById(id);
-            if (guest != null)
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                reservation.Guests.Add(guest);
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    INSERT INTO [dbo].[reservation] (reservation_room_id, reservation_type, reservation_guests, reservation_start_date, reservation_end_date, reservation_total_price, reservation_is_active)
+                    OUTPUT inserted.reservation_id
+                    VALUES (@reservation_room_id, @reservation_type, @reservation_guests, @reservation_start_date, @reservation_end_date, @reservation_total_price, @reservation_is_active)
+                "
+                ;
+
+                command.Parameters.Add(new SqlParameter("reservation_room_id", reservation.RoomId));
+                command.Parameters.Add(new SqlParameter("reservation_type", reservation.ReservationType.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_guests", string.Join("|", reservation.Guests.Select(guest => guest.Id))));
+                command.Parameters.Add(new SqlParameter("reservation_start_date", reservation.StartDateTime.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_end_date", reservation.EndDateTime.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_total_price", reservation.TotalPrice));
+                command.Parameters.Add(new SqlParameter("reservation_is_active", reservation.IsActive));
+
+
+                return (int)command.ExecuteScalar();
             }
         }
 
-        reservation.StartDateTime = DateTime.Parse(parts[4]);
-        reservation.EndDateTime = DateTime.Parse(parts[5]);
-        reservation.TotalPrice = double.Parse(parts[6]);
-        reservation.IsActive = bool.Parse(parts[7]);
-
-        return reservation;
-    }
-
-    public List<Reservation> Load()
-    {
-        if (!File.Exists("reservations.txt"))
+        public List<Reservation> Load()
         {
-            return null!;
-        }
-
-        try
-        {
-            using (var streamReader = new StreamReader("reservations.txt"))
+            var reservations = new List<Reservation>();
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                List<Reservation> resList = new List<Reservation>();
-                string line;
+                var commandText = "SELECT * FROM [dbo].[reservation]";
+                SqlDataAdapter adapter = new SqlDataAdapter(commandText, conn);
 
-                while ((line = streamReader.ReadLine()!) != null)
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet, "reservation");
+
+                foreach (DataRow row in dataSet.Tables["reservation"]!.Rows)
                 {
-                    var res = FromCSV(line);
-                    resList.Add(res);
-                }
+                    var reservation = new Reservation()
+                    {
+                        Id = (int)row["reservation_id"],
+                        RoomId = (int)row["reservation_room_id"],
+                        ReservationType = (ReservationType)row["reservation_type"],
+                        StartDateTime = (DateTime)row["reservation_start_date"],
+                        EndDateTime = (DateTime)row["reservation_end_date"],
+                        TotalPrice = (double)row["reservation_total_price"],
+                        IsActive = (bool)row["reservation_is_active"]
+                    };
 
-                return resList;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw new CouldntLoadResourceException(ex.Message);
-        }
-    }
+                    string[] guestIDs = (row["reservation_guests"] as string).Split('|');
+                    reservation.Guests = new List<Guest>();
+                    foreach (var guestID in guestIDs)
+                    {
+                        int id = int.Parse(guestID);
+                        Guest guest = GetGuestById(id);
+                        if (guest != null)
+                        {
+                            reservation.Guests.Add(guest);
+                        }
+                    }
 
-    public void Save(List<Reservation> reservationList)
-    {
-        try
-        {
-            using (var streamWriter = new StreamWriter("reservations.txt"))
-            {
-                foreach (var res in reservationList)
-                {
-                    streamWriter.WriteLine(ToCSV(res));
+                    reservations.Add(reservation);
                 }
             }
+
+            return reservations;
         }
-        catch (Exception ex)
+
+        public void Save(List<Reservation> reservationList)
         {
-            throw new CouldntPersistDataException(ex.Message);
+            foreach(Reservation reservation in reservationList)
+            {
+                if (reservation.Id == 0)
+                {
+                    Insert(reservation);
+                }
+                else
+                {
+                    Update(reservation);
+                }
+            }
         }
-    }
 
+        public void Update(Reservation reservation)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
 
-    private Guest GetGuestById(int id)
-    {
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    UPDATE [dbo].[reservation]
+                    SET reservation_room_id=@reservation_room_id, reservation_type=@reservation_type, reservation_guests=@reservation_guests, reservation_start_date=@reservation_start_date, reservation_end_date=@reservation_end_date, reservation_total_price=@reservation_total_price, reservation_is_active=@reservation_is_active
+                    WHERE reservation_id=@reservation_id
+                "
+                ;
+                command.Parameters.Add(new SqlParameter("reservation_id", reservation.Id));
+                command.Parameters.Add(new SqlParameter("reservation_room_id", reservation.RoomId));
+                command.Parameters.Add(new SqlParameter("reservation_type", reservation.ReservationType.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_guests", string.Join("|", reservation.Guests.Select(guest => guest.Id))));
+                command.Parameters.Add(new SqlParameter("reservation_start_date", reservation.StartDateTime.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_end_date", reservation.EndDateTime.ToString()));
+                command.Parameters.Add(new SqlParameter("reservation_total_price", reservation.TotalPrice));
+                command.Parameters.Add(new SqlParameter("reservation_is_active", reservation.IsActive));
 
-        return Hotel.GetInstance().Guests.Find(g => g.Id == id)!;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private Guest GetGuestById(int id)
+        {
+
+            return Hotel.GetInstance().Guests.Find(g => g.Id == id)!;
+        }
     }
 }

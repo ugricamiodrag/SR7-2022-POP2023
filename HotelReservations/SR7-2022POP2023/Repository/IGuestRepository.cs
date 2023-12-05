@@ -12,6 +12,9 @@ namespace HotelReservations.Repository
         List<Guest> Load();
 
         void Save(List<Guest> guests);
+
+        int Insert(Guest guest);
+        void Update(Guest guest);
     }
     
 }

@@ -10,10 +10,10 @@ namespace HotelReservations.Service
 {
     public class GuestService
     {
-        GuestRepository guestRepository;
+        CSVGuestRepository guestRepository;
         public GuestService() { 
             
-            guestRepository = new GuestRepository();
+            guestRepository = new CSVGuestRepository();
         
         }
 

@@ -7,13 +7,12 @@ using HotelReservations.Model;
 
 namespace HotelReservations.Repository
 {
-    public interface IPriceListRepository
+    public interface IRoomTypeRepository
     {
-        List<Price> Load();
+        List<RoomType> Load();
+        void Save(List<RoomType> roomTypes);
+        int Insert(RoomType roomType);
 
-        void Save(List<Price> priceList);
-
-        int Insert(Price price);
-        void Update(Price price);
+        void Update(RoomType roomType);
     }
 }

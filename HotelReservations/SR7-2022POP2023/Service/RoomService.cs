@@ -14,7 +14,7 @@ namespace HotelReservations.Service
         private ReservationService reservationService = new ReservationService();
         public RoomService() 
         { 
-            roomRepository = new RoomRepository();
+            roomRepository = new CSVRoomRepository();
         }
 
         public List<Room> GetAllRooms()

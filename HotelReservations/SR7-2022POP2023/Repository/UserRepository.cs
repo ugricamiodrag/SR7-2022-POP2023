@@ -1,86 +1,116 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HotelReservations.Exceptions;
 using HotelReservations.Model;
+using HotelReservations.Windows;
 
 namespace HotelReservations.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private string ToCSV(User user)
+        public int Insert(User user)
         {
-            return $"{user.Id},{user.Name},{user.Surname},{user.JMBG},{user.Username},{user.Password},{user.UserType},{user.IsActive}";
-        }
-
-        private User FromCSV(string csv)
-        {
-            string[] csvValues = csv.Split(',');
-
-            var user = new User();
-            user.Id = int.Parse(csvValues[0]);
-            user.Name = csvValues[1];
-            user.Surname = csvValues[2];
-            user.JMBG = csvValues[3];
-            user.Username = csvValues[4];
-            user.Password = csvValues[5];
-            user.UserType = csvValues[6];
-            user.IsActive = bool.Parse(csvValues[7]);
-
-            return user;
-        }
-
-        public void Save(List<User> userList)
-        {
-            try
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                using (var streamWriter = new StreamWriter("users.txt"))
-                {
-                    foreach (var user in userList)
-                    {
-                        streamWriter.WriteLine(ToCSV(user));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CouldntPersistDataException(ex.Message);
-            }
+                conn.Open();
 
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    INSERT INTO [dbo].[user] (first_name, last_name, JMBG, username, password, user_type, user_is_active)
+                    OUTPUT inserted.user_id
+                    VALUES (@first_name, @last_name, @JMBG, @username, @password, @user_type, @user_is_active)
+                "
+                ;
+
+                command.Parameters.Add(new SqlParameter("first_name", user.Name));
+                command.Parameters.Add(new SqlParameter("last_name", user.Surname));
+                command.Parameters.Add(new SqlParameter("JMBG", user.JMBG));
+                command.Parameters.Add(new SqlParameter("username", user.Username));
+                command.Parameters.Add(new SqlParameter("password", user.Password));
+                command.Parameters.Add(new SqlParameter("user_type", user.UserType));
+                command.Parameters.Add(new SqlParameter("user_is_active", user.IsActive));
+
+
+                return (int)command.ExecuteScalar();
+            }
         }
 
         public List<User> Load()
         {
-            if (!File.Exists("users.txt"))
+            var users = new List<User>();
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                return null;
-            }
+                var commandText = "SELECT * FROM [dbo].[user]";
+                SqlDataAdapter adapter = new SqlDataAdapter(commandText, conn);
 
-            try
-            {
-                using (var streamReader = new StreamReader("users.txt"))
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet, "user");
+
+                foreach (DataRow row in dataSet.Tables["user"]!.Rows)
                 {
-                    List<User> users = new List<User>();
-                    string line;
-
-                    while ((line = streamReader.ReadLine()) != null)
+                    var user = new User()
                     {
-                        var user = FromCSV(line);
-                        users.Add(user);
-                    }
+                        Id = (int)row["user_id"],
+                        Name = row["first_name"] as string,
+                        Surname = row["last_name"] as string,
+                        JMBG = row["JMBG"] as string,
+                        Username = row["username"] as string,
+                        Password = row["password"] as string,
+                        UserType = row["user_type"] as string,
+                        IsActive = (bool)row["user_is_active"]
+                    };
 
-                    return users;
+                    users.Add(user);
                 }
             }
-            catch (Exception ex)
+
+            return users;
+        }
+
+        public void Save(List<User> userList)
+        {
+            foreach (var user in userList)
             {
-                Console.WriteLine(ex.Message);
-                throw new CouldntLoadResourceException(ex.Message);
+                if (user.Id == 0)
+                {
+                    Insert(user);
+                }
+                else
+                {
+                    Update(user);
+                }
+            }
+        }
+
+        public void Update(User user)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    UPDATE [dbo].[user]
+                    SET first_name=@first_name, last_name=@last_name, JMBG=@JMBG, username=@username, password=@password, user_type=@user_type, user_is_active=@user_is_active
+                    WHERE user_id=@user_id
+                ";
+
+                command.Parameters.Add(new SqlParameter("user_id", user.Id));
+                command.Parameters.Add(new SqlParameter("first_name", user.Name));
+                command.Parameters.Add(new SqlParameter("last_name", user.Surname));
+                command.Parameters.Add(new SqlParameter("JMBG", user.JMBG));
+                command.Parameters.Add(new SqlParameter("username", user.Username));
+                command.Parameters.Add(new SqlParameter("password", user.Password));
+                command.Parameters.Add(new SqlParameter("user_type", user.UserType));
+                command.Parameters.Add(new SqlParameter("user_is_active", user.IsActive));
+
+
+                command.ExecuteNonQuery();
             }
         }
     }
-
 }

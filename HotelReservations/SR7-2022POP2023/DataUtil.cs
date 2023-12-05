@@ -20,21 +20,22 @@ namespace HotelReservations
 
             try
             {
-                IRoomRepository roomRepository = new RoomRepository();
-                List<RoomType> loadedRoomTypes = roomRepository.GetRoomTypes();
+                IRoomTypeRepository roomTypeRepository = new RoomTypeRepository();
+                List<RoomType> loadedRoomTypes = roomTypeRepository.Load();
 
                 if (loadedRoomTypes != null)
                 {
 
                     Hotel.GetInstance().RoomTypes = loadedRoomTypes;
 
-                    roomRepository.SaveRT(loadedRoomTypes);
+                    roomTypeRepository.Save(loadedRoomTypes);
                 }
                 else
                 {
                     Console.WriteLine("No room types found.");
                 }
 
+                IRoomRepository roomRepository = new RoomRepository();
                 var loadedRooms = roomRepository.Load();
                 if (loadedRooms != null)
                 {
@@ -125,7 +126,8 @@ namespace HotelReservations
 
 
                 IRoomRepository roomRepository = new RoomRepository();
-                roomRepository.SaveRT(Hotel.GetInstance().RoomTypes);
+                IRoomTypeRepository roomTypeRepository = new RoomTypeRepository();
+                roomTypeRepository.Save(Hotel.GetInstance().RoomTypes);
                 roomRepository.Save(Hotel.GetInstance().Rooms);
 
                 IGuestRepository guestRepository = new GuestRepository();

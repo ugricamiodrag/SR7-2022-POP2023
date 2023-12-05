@@ -31,5 +31,15 @@ namespace HotelReservations.Model
             return reservation;
         }
 
+        public string GuestsToString(List<Guest> Guests)
+        {
+            string g = "";
+            foreach (Guest guest in Guests)
+            {
+                g += guest.Id + "|";
+            }
+            return g;
+        }
+
     }
 }

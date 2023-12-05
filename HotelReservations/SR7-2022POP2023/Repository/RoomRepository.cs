@@ -1,157 +1,114 @@
-﻿using HotelReservations.Exceptions;
-using HotelReservations.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using HotelReservations.Model;
 
 namespace HotelReservations.Repository
 {
-    // Koristimo repozitorijume da bismo izolovali operacije
-    // vezane za eksternu memoriju. Sad koristimo csv, sutra bazu,
-    // potrebno nam je lako uvođenje promena.
-    // Na narednim terminima ćemo "apstrahovati" repozitorijume
-    // interfejsima.
     public class RoomRepository : IRoomRepository
     {
-        private string ToCSV(Room room)
+        public List<Room> Load()
         {
-            return $"{room.Id},{room.RoomNumber},{room.HasTV},{room.HasMiniBar},{room.RoomType.Id},{room.IsActive}";
-        }
-
-        private Room FromCSV(string csv)
-        {
-            string[] csvValues = csv.Split(',');
-
-            var room = new Room();
-            room.Id = int.Parse(csvValues[0]);
-            room.RoomNumber = csvValues[1];
-            room.HasTV = bool.Parse(csvValues[2]);
-            room.HasMiniBar = bool.Parse(csvValues[3]);
-            var roomTypeId = int.Parse(csvValues[4]);
-            room.RoomType = Hotel.GetInstance().RoomTypes.Find(rt => rt.Id == roomTypeId)!;
-            room.IsActive = bool.Parse(csvValues[5]);
-
-            return room;
-        }
-
-
-        private string ToCSV(RoomType roomType)
-        {
-            return $"{roomType.Id},{roomType.Name},{roomType.IsActive}";
-        }
-
-        private RoomType RTFromCSV(string csv)
-        {
-            string[] csvValues = csv.Split(",");
-
-            var roomType = new RoomType();
-            roomType.Id = int.Parse(csvValues[0]);
-            roomType.Name = csvValues[1];
-            roomType.IsActive = bool.Parse(csvValues[2]);
-
-            return roomType;
-        } 
-
-
-        public void SaveRT(List<RoomType> roomTypes)
-        {
-            try
+            var rooms = new List<Room>();
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                using (var streamWriter = new StreamWriter("roomtypes.txt"))
+                var commandText = "SELECT r.*, rt.* FROM [dbo].[room] r\r\nINNER JOIN [dbo].[room_type] rt ON r.room_type_id = rt.room_type_id";
+                SqlDataAdapter adapter = new SqlDataAdapter(commandText, conn);
+
+                DataSet dataSet = new DataSet();
+                adapter.Fill(dataSet, "room");
+
+                foreach (DataRow row in dataSet.Tables["room"]!.Rows)
                 {
-                    foreach (var roomType in roomTypes)
+                    var room = new Room()
                     {
-                        streamWriter.WriteLine(ToCSV(roomType));
-                    }
+                        Id = (int)row["room_id"],
+                        RoomNumber = row["room_number"] as string,
+                        HasTV = (bool)row["has_TV"],
+                        HasMiniBar = (bool)row["has_mini_bar"],
+                        IsActive = (bool)row["room_is_active"],
+                        RoomType = new RoomType()
+                        {
+                            Id = (int)row["room_type_id"],
+                            Name = (string)row["room_type_name"],
+                            IsActive = (bool)row["room_type_is_active"]
+                        }
+                    };
+
+                    rooms.Add(room);
                 }
             }
-            catch (Exception ex)
+
+            return rooms;
+        }
+
+        public int Insert(Room room)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                throw new CouldntPersistDataException(ex.Message);
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    INSERT INTO [dbo].[room] (room_number, has_TV, has_mini_bar, room_is_active, room_type_id)
+                    OUTPUT inserted.room_id
+                    VALUES (@room_number, @has_TV, @has_mini_bar, @room_is_active, @room_type_id)
+                ";
+
+                command.Parameters.Add(new SqlParameter("room_number", room.RoomNumber));
+                command.Parameters.Add(new SqlParameter("has_TV", room.HasTV));
+                command.Parameters.Add(new SqlParameter("has_mini_bar", room.HasMiniBar));
+                command.Parameters.Add(new SqlParameter("room_is_active", room.IsActive));
+                command.Parameters.Add(new SqlParameter("room_type_id", room.RoomType.Id));
+
+
+                return (int)command.ExecuteScalar();
             }
         }
 
-        public List<RoomType> GetRoomTypes() {
-            if (!File.Exists("roomtypes.txt"))
+        public void Update(Room room)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
-                return null!;
-            }
+                conn.Open();
 
-            try
-            {
-                using (var streamReader = new StreamReader("roomtypes.txt"))
-                {
-                    List<RoomType> roomTypes = new List<RoomType>();
-                    string line;
+                var command = conn.CreateCommand();
+                command.CommandText = @"
+                    UPDATE [dbo].[room] 
+                    SET room_number=@room_number, has_TV=@has_TV, has_mini_bar=@has_mini_bar, room_is_active=@room_is_active, room_type_id=@room_type_id
+                    WHERE room_id=@room_id
+                ";
 
-                    while ((line = streamReader.ReadLine()!) != null)
-                    {
-                        var roomType = RTFromCSV(line);
-                        roomTypes.Add(roomType);
-                    }
+                command.Parameters.Add(new SqlParameter("room_id", room.Id));
+                command.Parameters.Add(new SqlParameter("room_number", room.RoomNumber));
+                command.Parameters.Add(new SqlParameter("has_TV", room.HasTV));
+                command.Parameters.Add(new SqlParameter("has_mini_bar", room.HasMiniBar));
+                command.Parameters.Add(new SqlParameter("room_is_active", room.IsActive));
+                command.Parameters.Add(new SqlParameter("room_type_id", room.RoomType.Id));
 
-                    return roomTypes;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new CouldntLoadResourceException(ex.Message);
+                command.ExecuteNonQuery();
             }
         }
-
 
         public void Save(List<Room> roomList)
         {
-            try
+            foreach (var room in roomList)
             {
-                using (var streamWriter = new StreamWriter("rooms.txt"))
+                if (room.Id == 0)
+                { 
+                    Insert(room);
+                }
+                else
                 {
-                    foreach (var room in roomList)
-                    {
-                        streamWriter.WriteLine(ToCSV(room));
-                    }
+                    Update(room);
                 }
             }
-            catch (Exception ex) 
-            {
-                throw new CouldntPersistDataException(ex.Message);
-            }
-            
         }
 
-        public List<Room> Load()
-        {
-            if (!File.Exists("rooms.txt"))
-            {
-                return null!;
-            }
-
-            try
-            {
-                using (var streamReader = new StreamReader("rooms.txt"))
-                {
-                    List<Room> rooms = new List<Room>();
-                    string line;
-
-                    while ((line = streamReader.ReadLine()!) != null)
-                    {
-                        var room = FromCSV(line);
-                        rooms.Add(room);
-                    }
-
-                    return rooms;
-                }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new CouldntLoadResourceException(ex.Message);
-            }
-        }
+        
     }
 }
