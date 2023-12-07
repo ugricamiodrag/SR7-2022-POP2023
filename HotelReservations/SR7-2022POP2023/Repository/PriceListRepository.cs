@@ -43,14 +43,25 @@ namespace HotelReservations.Repository
             using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
             {
                 var commandText = "SELECT r.*, rt.* FROM [dbo].[price_list] r\r\nINNER JOIN [dbo].[room_type] rt ON r.price_list_room_type_id = rt.room_type_id";
+
                 SqlDataAdapter adapter = new SqlDataAdapter(commandText, conn);
 
                 DataSet dataSet = new DataSet();
-                adapter.Fill(dataSet, "price");
+                adapter.Fill(dataSet, "price_list");
 
 
-                foreach (DataRow row in dataSet.Tables["price"]!.Rows)
+                foreach (DataRow row in dataSet.Tables["price_list"]!.Rows)
                 {
+                    ReservationType reservationType;
+                    if (Enum.TryParse(typeof(ReservationType), row["price_list_reservation_type"].ToString(), out object parsedType))
+                    {
+                        reservationType = (ReservationType)parsedType;
+                    }
+                    else
+                    {
+          
+                        reservationType = ReservationType.Day;
+                    }
                     var price = new Price()
                     {
                         Id = (int)row["price_list_id"],
@@ -60,7 +71,7 @@ namespace HotelReservations.Repository
                             Name = (string)row["room_type_name"],
                             IsActive = (bool)row["room_type_is_active"]
                         },
-                        ReservationType = (ReservationType)row["price_list_reservation_type"],
+                        ReservationType = reservationType,
                         PriceValue = (double)row["price_list_value"],
                         IsActive = (bool)row["price_list_is_active"]
 
@@ -77,14 +88,30 @@ namespace HotelReservations.Repository
         {
            foreach(Price price in priceList)
             {
-                if(price.Id == 0)
+                if(Exists(price.Id))
                 {
-                    Insert(price);
+                    Update(price);
+                    
                 }
                 else
                 {
-                    Update(price);
+                    Insert(price);
                 }
+            }
+        }
+
+        public bool Exists(int priceId)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM [dbo].[price_list] WHERE price_list_id = @price_list_id";
+                command.Parameters.AddWithValue("@price_list_id", priceId);
+
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
             }
         }
 
@@ -96,7 +123,7 @@ namespace HotelReservations.Repository
 
                 var command = conn.CreateCommand();
                 command.CommandText = @"
-                    UPDATE [dbo].[reservation]
+                    UPDATE [dbo].[price_list]
                     SET price_list_room_type_id=@price_list_room_type_id, price_list_reservation_type=@price_list_reservation_type, price_list_value=@price_list_value, price_list_is_active=@price_list_is_active
                     WHERE price_list_id=@price_list_id
                 "

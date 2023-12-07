@@ -65,7 +65,7 @@ namespace HotelReservations.Repository
                 command.Parameters.Add(new SqlParameter("room_is_active", room.IsActive));
                 command.Parameters.Add(new SqlParameter("room_type_id", room.RoomType.Id));
 
-
+                
                 return (int)command.ExecuteScalar();
             }
         }
@@ -98,17 +98,33 @@ namespace HotelReservations.Repository
         {
             foreach (var room in roomList)
             {
-                if (room.Id == 0)
-                { 
-                    Insert(room);
+                if (Exists(room.Id))
+                {
+                    Update(room);
                 }
                 else
                 {
-                    Update(room);
+                    Insert(room);
                 }
             }
         }
 
-        
+        public bool Exists(int roomId)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM [dbo].[room] WHERE room_id = @roomId";
+                command.Parameters.AddWithValue("@roomId", roomId);
+
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+
+
     }
 }

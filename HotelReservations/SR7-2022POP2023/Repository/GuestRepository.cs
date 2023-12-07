@@ -72,16 +72,33 @@ namespace HotelReservations.Repository
         {
             foreach (Guest guest in guests)
             {
-                if (guest.Id == 0)
+                if (Exists(guest.Id))
                 {
-                    Insert(guest);
+                    Update(guest);
+                    
                 }
                 else
                 {
-                    Update(guest);
+                    Insert(guest);
                 }
             }
         }
+
+        public bool Exists(int guestId)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM [dbo].[guest] WHERE guest_id = @guest_id";
+                command.Parameters.AddWithValue("@guest_id", guestId);
+
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
 
         public void Update(Guest guest)
         {

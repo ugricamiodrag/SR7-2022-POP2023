@@ -70,13 +70,13 @@ namespace HotelReservations.Repository
         {
             foreach (RoomType roomType in roomTypes)
             {
-                if (roomType.Id == 0)
+                if (Exists(roomType.Id))
                 {
-                    Insert(roomType);
+                    Update(roomType);
                 }
                 else
                 {
-                    Update(roomType);
+                    Insert(roomType);
                 }
             }
         }
@@ -101,5 +101,21 @@ namespace HotelReservations.Repository
                 command.ExecuteNonQuery();
             }
         }
+
+        public bool Exists(int roomTypeId)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM [dbo].[room_type] WHERE room_type_id = @room_type_id";
+                command.Parameters.AddWithValue("@room_type_id", roomTypeId);
+
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
     }
 }

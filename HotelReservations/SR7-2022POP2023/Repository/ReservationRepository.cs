@@ -86,14 +86,30 @@ namespace HotelReservations.Repository
         {
             foreach(Reservation reservation in reservationList)
             {
-                if (reservation.Id == 0)
+                if (Exists(reservation.Id))
                 {
-                    Insert(reservation);
+                    Update(reservation);
+                   
                 }
                 else
                 {
-                    Update(reservation);
+                    Insert(reservation);
                 }
+            }
+        }
+
+        public bool Exists(int reservationId)
+        {
+            using (SqlConnection conn = new SqlConnection(Config.CONNECTION_STRING))
+            {
+                conn.Open();
+
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM [dbo].[reservation] WHERE reservation_id = @reservation_id";
+                command.Parameters.AddWithValue("@reservation_id", reservationId);
+
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
             }
         }
 

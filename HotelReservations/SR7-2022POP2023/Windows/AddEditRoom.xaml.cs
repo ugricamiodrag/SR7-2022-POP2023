@@ -26,6 +26,7 @@ namespace HotelReservations.Windows
             if (room == null)
             {
                 contextRoom = new Room();
+                contextRoom.Id = 0;
             }
             else
             {
