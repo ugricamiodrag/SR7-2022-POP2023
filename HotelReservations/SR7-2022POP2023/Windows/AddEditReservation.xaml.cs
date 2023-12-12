@@ -78,8 +78,8 @@ namespace HotelReservations.Windows
                 }
                 ReservationTB.Text = reservation.ReservationType.ToString();
                 dgGuests.ItemsSource = reservation.Guests;
-                SDateTB.Text = reservation.StartDateTime.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
-                EDateTB.Text = reservation.EndDateTime.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
+                SDateTB.Text = reservation.StartDateTime.ToString("dd.MM.yyyy. HH:mm:ss", new System.Globalization.CultureInfo("en-US"));
+                EDateTB.Text = reservation.EndDateTime.ToString("dd.MM.yyyy. HH:mm:ss", new System.Globalization.CultureInfo("en-US"));
                 TotalPriceTB.Text = reservation.TotalPrice.ToString();
             }
             else
@@ -156,7 +156,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                SDateTB.Text = selectedDate.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
+                SDateTB.Text = selectedDate.ToString("dd.MM.yyyy. HH:mm:ss", new System.Globalization.CultureInfo("en-US"));
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -169,7 +169,7 @@ namespace HotelReservations.Windows
 
             datePickWindow.DateSelected += (s, selectedDate) =>
             {
-                EDateTB.Text = selectedDate.ToString("dd/MM/yyyy hh:mm:ss tt", new System.Globalization.CultureInfo("en-US"));
+                EDateTB.Text = selectedDate.ToString("dd.MM.yyyy. HH:mm:ss", new System.Globalization.CultureInfo("en-US"));
                 CalculateTheTotalPrice(SDateTB.Text, EDateTB.Text);
             };
 
@@ -181,12 +181,14 @@ namespace HotelReservations.Windows
         {
             if (!string.IsNullOrEmpty(text1) && !string.IsNullOrEmpty(text2))
             {
+               
+
+                string[] dateFormats = { "dd.MM.yyyy. HH:mm:ss", "d.MM.yyyy. HH:mm:ss" }; // Add other possible formats
+
                 DateTime startDate, endDate;
 
-                string dateFormat = "dd/MM/yyyy hh:mm:ss tt";
-
-                if (DateTime.TryParseExact(text1, dateFormat, new System.Globalization.CultureInfo("en-US"), DateTimeStyles.None, out startDate) &&
-                    DateTime.TryParseExact(text2, dateFormat, new System.Globalization.CultureInfo("en-US"), DateTimeStyles.None, out endDate))
+                if (DateTime.TryParseExact(text1, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate) &&
+                    DateTime.TryParseExact(text2, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                 {
                     var sk = endDate - startDate;
                     int difference = (int)sk.TotalDays;
@@ -235,7 +237,7 @@ namespace HotelReservations.Windows
 
             List<Price> pricesList = priceListService.GetAllPrices();
             var pricesForRoom = pricesList.Where(price =>
-                price.RoomType == roomType && price.ReservationType == reservationType && price.IsActive).ToList();
+                price.RoomType.Name == roomType.Name && price.ReservationType == reservationType && price.IsActive == true).ToList();
 
             return pricesForRoom;
         }
@@ -252,7 +254,7 @@ namespace HotelReservations.Windows
                 int roomId = int.Parse(RoomTB.Text);
                 if (Enum.TryParse(ReservationTB.Text, out ReservationType reservationType))
                 {
-                    string dateFormat = "dd/MM/yyyy hh:mm:ss tt";
+                    string dateFormat = "dd.MM.yyyy. HH:mm:ss";
 
                     if (double.TryParse(TotalPriceTB.Text, out double totalPrice) &&
                         DateTime.TryParseExact(SDateTB.Text, dateFormat, new System.Globalization.CultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out DateTime startDateTime) &&

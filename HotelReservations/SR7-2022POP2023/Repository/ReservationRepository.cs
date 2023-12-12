@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HotelReservations.Model;
-
+using System.Globalization;
 
 namespace HotelReservations.Repository
 {
@@ -52,13 +52,21 @@ namespace HotelReservations.Repository
 
                 foreach (DataRow row in dataSet.Tables["reservation"]!.Rows)
                 {
+                    ReservationType reservationType;
+                    if (Enum.TryParse(typeof(ReservationType), row["reservation_type"].ToString(), out object parsedType))
+                    {
+                        reservationType = (ReservationType)parsedType;
+                    }
+                    else
+                    {
+                        reservationType = ReservationType.Day;
+                    }
+
                     var reservation = new Reservation()
                     {
                         Id = (int)row["reservation_id"],
                         RoomId = (int)row["reservation_room_id"],
-                        ReservationType = (ReservationType)row["reservation_type"],
-                        StartDateTime = (DateTime)row["reservation_start_date"],
-                        EndDateTime = (DateTime)row["reservation_end_date"],
+                        ReservationType = reservationType,
                         TotalPrice = (double)row["reservation_total_price"],
                         IsActive = (bool)row["reservation_is_active"]
                     };
@@ -75,12 +83,49 @@ namespace HotelReservations.Repository
                         }
                     }
 
+
+                    string startDateTimeString = row["reservation_start_date"].ToString();
+                    string endDateTimeString = row["reservation_end_date"].ToString();
+
+                    Console.WriteLine($"Start Date String: {startDateTimeString}");
+                    Console.WriteLine($"End Date String: {endDateTimeString}");
+
+                    DateTime startDateTime;
+                    DateTime endDateTime;
+
+                    if (DateTime.TryParseExact(
+                        startDateTimeString,
+                        "d.MM.yyyy. HH:mm:ss", 
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out startDateTime)
+                        && DateTime.TryParseExact(
+                            endDateTimeString,
+                            "d.MM.yyyy. HH:mm:ss",
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out endDateTime))
+                    {
+                        reservation.StartDateTime = startDateTime;
+                        reservation.EndDateTime = endDateTime;
+                    }
+                    else
+                    {
+                       
+
+                        reservation.StartDateTime = DateTime.MinValue;
+                        reservation.EndDateTime = DateTime.MinValue;
+                    }
+
+
                     reservations.Add(reservation);
                 }
             }
 
             return reservations;
         }
+
+
 
         public void Save(List<Reservation> reservationList)
         {

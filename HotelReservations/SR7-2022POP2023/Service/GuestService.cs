@@ -40,6 +40,7 @@ namespace HotelReservations.Service
                 guest.Id = GetNextIdValue();
                 guest.IDNumber = GenerateIDNumber(guest.Name, guest.Surname, guest.Id);
                 Hotel.GetInstance().Guests.Add(guest);
+
             }
             else
             {
