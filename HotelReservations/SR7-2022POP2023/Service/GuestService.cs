@@ -10,10 +10,10 @@ namespace HotelReservations.Service
 {
     public class GuestService
     {
-        CSVGuestRepository guestRepository;
+        GuestRepository guestRepository;
         public GuestService() { 
             
-            guestRepository = new CSVGuestRepository();
+            guestRepository = new GuestRepository();
         
         }
 
@@ -47,6 +47,8 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Guests.FindIndex(r => r.Id == guest.Id);
                 Hotel.GetInstance().Guests[index] = guest;
             }
+            guestRepository.Save(Hotel.GetInstance().Guests);
+            
         }
 
         private int GetNextIdValue()

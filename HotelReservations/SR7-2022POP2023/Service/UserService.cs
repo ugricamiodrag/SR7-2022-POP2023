@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HotelReservations.Model;
+using HotelReservations.Repository;
 
 namespace HotelReservations.Service
 {
     public class UserService
     {
+        private UserRepository userRepository = new UserRepository();
         public List<User> GetAllUsers()
         {
             return Hotel.GetInstance().Users;
@@ -45,6 +47,8 @@ namespace HotelReservations.Service
                     Hotel.GetInstance().Users[index] = user;
                 }
             }
+
+            userRepository.Save(Hotel.GetInstance().Users);
         }
 
         public User ReturnUser(string username,  string password)

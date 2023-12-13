@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HotelReservations.Model;
+using HotelReservations.Repository;
 
 namespace HotelReservations.Service
 {
     public class ReservationService
     {
+        private ReservationRepository reservationRepository = new ReservationRepository();
         public List<Reservation> getAllReservations()
         {
             var res = Hotel.GetInstance().Reservations;
@@ -35,6 +37,8 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Reservations.FindIndex(r => r.Id == reservation.Id);
                 Hotel.GetInstance().Reservations[index] = reservation;
             }
+            reservationRepository.Save(Hotel.GetInstance().Reservations);
+
         }
 
         public int GetNextIdValue()

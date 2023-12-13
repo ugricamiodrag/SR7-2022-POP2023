@@ -18,22 +18,36 @@ namespace HotelReservations.Repository
             {
                 conn.Open();
 
-                var command = conn.CreateCommand();
-                command.CommandText = @"
-                    INSERT INTO [dbo].[guest] (guest_name, guest_surname, guest_id_number, guest_is_active)
-                    OUTPUT inserted.guest_id
-                    VALUES (@guest_name, @guest_surname, @guest_id_number, @guest_is_active)
-                "
-                ;
+              
+                var commandCheck = conn.CreateCommand();
+                commandCheck.CommandText = "SELECT COUNT(*) FROM [dbo].[guest] WHERE guest_id_number = @guest_id_number";
+                commandCheck.Parameters.AddWithValue("@guest_id_number", guest.IDNumber);
 
-                command.Parameters.Add(new SqlParameter("guest_name", guest.Name));
-                command.Parameters.Add(new SqlParameter("guest_surname", guest.Surname));
-                command.Parameters.Add(new SqlParameter("guest_id_number", guest.IDNumber));
-                command.Parameters.Add(new SqlParameter("guest_is_active", guest.IsActive));
+                int count = (int)commandCheck.ExecuteScalar();
 
 
+                if (count > 0)
+                {
+                   
+                    return -1;
+                }
+                else
+                {
+                    
+                    var commandInsert = conn.CreateCommand();
+                    commandInsert.CommandText = @"
+                        INSERT INTO [dbo].[guest] (guest_name, guest_surname, guest_id_number, guest_is_active)
+                        OUTPUT inserted.guest_id
+                        VALUES (@guest_name, @guest_surname, @guest_id_number, @guest_is_active)
+                    ";
 
-                return (int)command.ExecuteScalar();
+                    commandInsert.Parameters.AddWithValue("guest_name", guest.Name);
+                    commandInsert.Parameters.AddWithValue("guest_surname", guest.Surname);
+                    commandInsert.Parameters.AddWithValue("guest_id_number", guest.IDNumber);
+                    commandInsert.Parameters.AddWithValue("guest_is_active", guest.IsActive);
+
+                    return (int)commandInsert.ExecuteScalar();
+                }
             }
         }
 

@@ -109,7 +109,7 @@
     Width="150"
     VerticalContentAlignment="Center"
     Margin="0,0,0,15"
-    Text="{Binding Path=StartDateTime, StringFormat=dd/MM/yyyy hh:mm:ss tt, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+    Text="{Binding Path=StartDateTime, StringFormat=dd.MM.yyyy. hh:mm:ss, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
                     <Validation.ErrorTemplate>
                         <ControlTemplate>
                             <StackPanel>
@@ -136,7 +136,7 @@
     Width="150"
     VerticalContentAlignment="Center"
     Margin="0,0,0,15"
-    Text="{Binding Path=EndDateTime, StringFormat=dd/MM/yyyy hh:mm:ss tt, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
+    Text="{Binding Path=EndDateTime, StringFormat=dd.MM.yyyy. hh:mm:ss, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
                     <Validation.ErrorTemplate>
                         <ControlTemplate>
                             <StackPanel>

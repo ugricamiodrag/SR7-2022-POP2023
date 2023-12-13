@@ -10,11 +10,12 @@ namespace HotelReservations.Service
 {
     public class RoomService
     {
-        IRoomRepository roomRepository;
+        RoomRepository roomRepository;
         private ReservationService reservationService = new ReservationService();
+        private RoomTypeRepository roomTypeRepository = new RoomTypeRepository();
         public RoomService() 
         { 
-            roomRepository = new CSVRoomRepository();
+            roomRepository = new RoomRepository();
         }
 
         public List<Room> GetAllRooms()
@@ -58,6 +59,8 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Rooms.FindIndex(r => r.Id == room.Id);
                 Hotel.GetInstance().Rooms[index] = room;
             }
+            roomRepository.Save(Hotel.GetInstance().Rooms);
+
         }
 
         public int GetNextIdValue()
@@ -141,6 +144,8 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().RoomTypes.FindIndex(r => r.Id == roomType.Id);
                 Hotel.GetInstance().RoomTypes[index] = roomType;
             }
+
+            roomTypeRepository.Save(Hotel.GetInstance().RoomTypes);
         }
 
         public int GetNextIdValueForRT()
