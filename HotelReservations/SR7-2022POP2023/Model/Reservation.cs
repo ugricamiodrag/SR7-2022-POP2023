@@ -13,8 +13,8 @@ namespace HotelReservations.Model
         public ReservationType ReservationType { get; set; }
         public List<Guest> Guests { get; set; }
         public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
-        public double TotalPrice { get; set; }
+        public DateTime? EndDateTime { get; set; }
+        public double? TotalPrice { get; set; }
         public bool IsActive { get; set; } = true;
 
         public Reservation Clone()

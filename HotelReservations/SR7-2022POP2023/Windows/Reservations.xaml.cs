@@ -24,6 +24,8 @@ namespace HotelReservations.Windows
     public partial class Reservations : Window
     {
         private ICollectionView view;
+        private RoomService roomService = new RoomService();
+        private PriceListService priceListService = new PriceListService();
         public Reservations()
         {
             InitializeComponent();
@@ -126,6 +128,84 @@ namespace HotelReservations.Windows
                 guestsColumn.CellTemplate = dataTemplate;
                 ReservationDG.Columns.Add(guestsColumn);
             }
+
+
+            if (e.PropertyName == "EndDateTime")
+            {
+                e.Column.Visibility = Visibility.Collapsed;
+
+                DataGridTemplateColumn leaveRoomColumn = new DataGridTemplateColumn();
+                leaveRoomColumn.Header = "Leave Room";
+
+                FrameworkElementFactory buttonFactory = new FrameworkElementFactory(typeof(Button));
+                buttonFactory.SetValue(Button.ContentProperty, "Leave Room");
+                buttonFactory.AddHandler(Button.ClickEvent, new RoutedEventHandler(btnLeaveRoom_Click));
+
+                DataTemplate dataTemplate = new DataTemplate();
+                dataTemplate.VisualTree = buttonFactory;
+
+                leaveRoomColumn.CellTemplate = dataTemplate;
+                ReservationDG.Columns.Add(leaveRoomColumn);
+            }
+        }
+
+        private void btnLeaveRoom_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null)
+            {
+                var reservation = button.DataContext as Reservation; 
+                if (reservation != null)
+                {
+
+                    reservation.EndDateTime = DateTime.Now;
+
+
+                    CalculateTotalPrice(reservation);
+                }
+            }
+        }
+
+        private void CalculateTotalPrice(Reservation reservation)
+        {
+            if (reservation != null)
+            {
+                DateTime startDate = reservation.StartDateTime;
+                DateTime endDate = DateTime.Now; 
+                var sk = endDate - startDate;
+                int difference = (int)sk.TotalDays;
+                int roomId = reservation.RoomId;
+
+                if (difference > 0)
+                {
+                    var roomType = roomService.GetRoomTypeById(roomId);
+                    ReservationType resType = difference > 1 ? ReservationType.Night : ReservationType.Day;
+                    List<Price> price = GetPricesForRoomType(roomType, resType);
+
+                    double priceValue = price.FirstOrDefault()?.PriceValue ?? 0; 
+
+                    var totalPrice = priceValue * difference;
+                    reservation.TotalPrice = totalPrice;
+                }
+                else
+                {
+                    MessageBox.Show("Pick the right dates.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Reservation data is empty.");
+            }
+        }
+
+        private List<Price> GetPricesForRoomType(RoomType roomType, ReservationType reservationType)
+        {
+
+            List<Price> pricesList = priceListService.GetAllPrices();
+            var pricesForRoom = pricesList.Where(price =>
+                price.RoomType.Name == roomType.Name && price.ReservationType == reservationType && price.IsActive == true).ToList();
+
+            return pricesForRoom;
         }
 
 

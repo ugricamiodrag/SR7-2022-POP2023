@@ -122,61 +122,10 @@
                 <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,5,15,15" Name="btnStartDate" VerticalAlignment="Top" Width="43" Click="btnStartDate_Click" />
                 <Label Content="*" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label 
-        Height="30"
-        Width="150"
-        Content="End date:"
-        Margin="0,0,0,15"
-        ></Label>
-                <TextBox 
-    IsReadOnly="True"
-    Name="EDateTB"
-    Height="30"
-    Width="150"
-    VerticalContentAlignment="Center"
-    Margin="0,0,0,15"
-    Text="{Binding Path=EndDateTime, StringFormat=dd.MM.yyyy. hh:mm:ss, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
-                    <Validation.ErrorTemplate>
-                        <ControlTemplate>
-                            <StackPanel>
-                                <AdornedElementPlaceholder/>
-                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Validation.ErrorTemplate>
-                </TextBox>
-                <Button Content="..." Height="23" HorizontalAlignment="Left" Margin="15,5,15,15" Name="btnEndDate" VerticalAlignment="Top" Width="43" Click="btnEndDate_Click" />
-                <Label Content="*" />
-            </StackPanel>
+            
 
-            <StackPanel Orientation="Horizontal">
-                <Label 
-        Height="30"
-        Width="150"
-        Content="Total Price:"
-        Margin="0,0,0,15"
-        ></Label>
-                <TextBox 
-                    
-                    IsReadOnly="True"
-        Name="TotalPriceTB"
-        Height="30"
-        Width="150"
-        VerticalContentAlignment="Center"
-        Margin="0,0,0,15"
-        Text="{Binding Path=TotalPrice, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}">
-                    <Validation.ErrorTemplate>
-                        <ControlTemplate>
-                            <StackPanel>
-                                <AdornedElementPlaceholder/>
-                                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"></TextBlock>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Validation.ErrorTemplate>
-                </TextBox>
 
-            </StackPanel>
+           
 
         </StackPanel>
         <StackPanel
