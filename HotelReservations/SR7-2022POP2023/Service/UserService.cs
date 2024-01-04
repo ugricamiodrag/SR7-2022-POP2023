@@ -48,7 +48,7 @@ namespace HotelReservations.Service
                 }
             }
 
-            userRepository.Save(Hotel.GetInstance().Users);
+          
         }
 
         public User ReturnUser(string username,  string password)

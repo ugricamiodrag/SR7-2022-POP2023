@@ -26,6 +26,7 @@ namespace HotelReservations.Windows
         private ICollectionView view;
         private RoomService roomService = new RoomService();
         private PriceListService priceListService = new PriceListService();
+        private bool isLeaveRoomColumnAdded = false;
         public Reservations()
         {
             InitializeComponent();
@@ -61,24 +62,30 @@ namespace HotelReservations.Windows
         {
             var selectedRes = (Reservation)view.CurrentItem;
 
-            if (selectedRes != null)
-            {
-                var editResWindow = new AddEditReservation(selectedRes);
-
-                Hide();
-
-                if (editResWindow.ShowDialog() == true)
-                {
-                    FillData();
-                }
-
-                Show();
-            }
-            else
+            if (selectedRes == null)
             {
                 MessageBox.Show("You didn't pick a reservation.");
+                return;
             }
+
+            if (selectedRes.EndDateTime.HasValue)
+            {
+                MessageBox.Show("You can't edit this reservation.");
+                return;
+            }
+
+            var editResWindow = new AddEditReservation(selectedRes);
+
+            Hide();
+
+            if (editResWindow.ShowDialog() == true)
+            {
+                FillData();
+            }
+
+            Show();
         }
+
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -130,73 +137,13 @@ namespace HotelReservations.Windows
             }
 
 
-            if (e.PropertyName == "EndDateTime")
-            {
-                e.Column.Visibility = Visibility.Collapsed;
+   
 
-                DataGridTemplateColumn leaveRoomColumn = new DataGridTemplateColumn();
-                leaveRoomColumn.Header = "Leave Room";
-
-                FrameworkElementFactory buttonFactory = new FrameworkElementFactory(typeof(Button));
-                buttonFactory.SetValue(Button.ContentProperty, "Leave Room");
-                buttonFactory.AddHandler(Button.ClickEvent, new RoutedEventHandler(btnLeaveRoom_Click));
-
-                DataTemplate dataTemplate = new DataTemplate();
-                dataTemplate.VisualTree = buttonFactory;
-
-                leaveRoomColumn.CellTemplate = dataTemplate;
-                ReservationDG.Columns.Add(leaveRoomColumn);
-            }
         }
 
-        private void btnLeaveRoom_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button != null)
-            {
-                var reservation = button.DataContext as Reservation; 
-                if (reservation != null)
-                {
+     
 
-                    reservation.EndDateTime = DateTime.Now;
-
-
-                    CalculateTotalPrice(reservation);
-                }
-            }
-        }
-
-        private void CalculateTotalPrice(Reservation reservation)
-        {
-            if (reservation != null)
-            {
-                DateTime startDate = reservation.StartDateTime;
-                DateTime endDate = DateTime.Now; 
-                var sk = endDate - startDate;
-                int difference = (int)sk.TotalDays;
-                int roomId = reservation.RoomId;
-
-                if (difference > 0)
-                {
-                    var roomType = roomService.GetRoomTypeById(roomId);
-                    ReservationType resType = difference > 1 ? ReservationType.Night : ReservationType.Day;
-                    List<Price> price = GetPricesForRoomType(roomType, resType);
-
-                    double priceValue = price.FirstOrDefault()?.PriceValue ?? 0; 
-
-                    var totalPrice = priceValue * difference;
-                    reservation.TotalPrice = totalPrice;
-                }
-                else
-                {
-                    MessageBox.Show("Pick the right dates.");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Reservation data is empty.");
-            }
-        }
+       
 
         private List<Price> GetPricesForRoomType(RoomType roomType, ReservationType reservationType)
         {
@@ -208,7 +155,31 @@ namespace HotelReservations.Windows
             return pricesForRoom;
         }
 
+        private void CheckOutGuestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedReservation = (Reservation)ReservationDG.SelectedItem;
 
+            if (selectedReservation != null)
+            {
+                if (!selectedReservation.IsActive)
+                {
+                    MessageBox.Show("This reservation is already checked out.");
+                    return;
+                }
+
+                var checkOutConfirmation = MessageBox.Show("Are you sure you want to check out this reservation?", "Checkout Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (checkOutConfirmation == MessageBoxResult.Yes)
+                {
+                    var checkOutWindow = new CheckOutGuestsHandler(selectedReservation);
+                    FillData();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a reservation to check out.");
+            }
+        }
 
     }
 }

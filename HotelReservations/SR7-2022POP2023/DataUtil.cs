@@ -143,8 +143,8 @@ namespace HotelReservations
                 reservationRepository.Save(Hotel.GetInstance().Reservations);
 
 
-                //BinaryRoomRepository binaryRoomRepository = new BinaryRoomRepository();
-                //binaryRoomRepository.Save(Hotel.GetInstance().Rooms);
+                ////BinaryRoomRepository binaryRoomRepository = new BinaryRoomRepository();
+                ////binaryRoomRepository.Save(Hotel.GetInstance().Rooms);
 
             }
             catch (CouldntPersistDataException)

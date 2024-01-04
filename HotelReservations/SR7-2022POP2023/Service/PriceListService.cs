@@ -38,7 +38,7 @@ namespace HotelReservations.Service
                 Hotel.GetInstance().PriceList[index] = price;
             }
 
-            listRepository.Save(Hotel.GetInstance().PriceList);
+          
         }
 
         public int GetNextIdValue()

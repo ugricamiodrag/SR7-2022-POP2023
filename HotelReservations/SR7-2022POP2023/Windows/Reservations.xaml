@@ -16,6 +16,7 @@
             <Button Name="AddBtn" Content="Add New Reservation" BorderBrush="LightGray" Click="AddBtn_Click"/>
             <Button Name="EditBtn" Content="Edit " BorderBrush="LightGray" Margin="5,0,0,0"  Click="EditBtn_Click" />
             <Button Name="DeleteBtn" Content="Delete" BorderBrush="LightGray" Margin="5,0,0,0" Click="DeleteBtn_Click"/>
+            <Button Name="CheckOutGuestBtn" Content="Check out guest(s)" BorderBrush="LightGray" Margin="5,0,0,0" Click="CheckOutGuestBtn_Click"/>
         </ToolBar>
 
         

@@ -37,7 +37,7 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Reservations.FindIndex(r => r.Id == reservation.Id);
                 Hotel.GetInstance().Reservations[index] = reservation;
             }
-            reservationRepository.Save(Hotel.GetInstance().Reservations);
+           
 
         }
 
@@ -85,6 +85,26 @@ namespace HotelReservations.Service
             return reservationsForRoomType;
         }
 
-       
+        public List<Room> GetOccupiedRoomsWithoutEndDateAndPrice()
+        {
+            var activeReservations = getAllReservations().Where(r => r.IsActive && (r.EndDateTime == null || r.TotalPrice == 0));
+
+            var occupiedRoomIds = activeReservations.Select(r => r.RoomId).Distinct().ToList();
+            var roomService = new RoomService();
+            var occupiedRooms = new List<Room>();
+
+            foreach (var roomId in occupiedRoomIds)
+            {
+                var room = roomService.GetAllRooms().FirstOrDefault(r => r.Id == roomId);
+                if (room != null)
+                {
+                    occupiedRooms.Add(room);
+                }
+            }
+
+            return occupiedRooms;
+        }
+
+
     }
 }

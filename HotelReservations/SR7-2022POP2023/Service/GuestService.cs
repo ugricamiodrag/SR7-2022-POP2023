@@ -47,7 +47,7 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Guests.FindIndex(r => r.Id == guest.Id);
                 Hotel.GetInstance().Guests[index] = guest;
             }
-            guestRepository.Save(Hotel.GetInstance().Guests);
+           
             
         }
 

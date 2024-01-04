@@ -28,7 +28,7 @@ namespace HotelReservations.Repository
                     command.Parameters.Add(new SqlParameter("@reservation_room_id", reservation.RoomId));
                     command.Parameters.Add(new SqlParameter("@reservation_type", reservation.ReservationType.ToString()));
                     command.Parameters.Add(new SqlParameter("@reservation_start_date", reservation.StartDateTime.ToString()));
-                    command.Parameters.Add(new SqlParameter("@reservation_end_date", reservation.EndDateTime != null ? (object)reservation.EndDateTime.ToString() : DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@reservation_end_date", reservation.EndDateTime != null ? (object)reservation.EndDateTime.Value.ToString("dd.MM.yyyy. HH:mm:ss") : DBNull.Value));
                     command.Parameters.Add(new SqlParameter("@reservation_total_price", reservation.TotalPrice != null ? (object)reservation.TotalPrice : DBNull.Value));
                     command.Parameters.Add(new SqlParameter("@reservation_is_active", reservation.IsActive));
 
@@ -189,7 +189,7 @@ namespace HotelReservations.Repository
             command.Parameters.AddWithValue("@reservation_room_id", reservation.RoomId);
             command.Parameters.AddWithValue("@reservation_type", reservation.ReservationType.ToString());
             command.Parameters.AddWithValue("@reservation_start_date", reservation.StartDateTime.ToString("dd.MM.yyyy. HH:mm:ss"));
-            command.Parameters.AddWithValue("@reservation_end_date", reservation.EndDateTime ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@reservation_end_date", reservation.EndDateTime != null ? reservation.EndDateTime.Value.ToString("dd.MM.yyyy. HH:mm:ss") : (object)DBNull.Value);
             command.Parameters.AddWithValue("@reservation_total_price", reservation.TotalPrice ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@reservation_is_active", reservation.IsActive);
 
@@ -227,7 +227,7 @@ namespace HotelReservations.Repository
 
             command.Parameters.AddWithValue("@room_id", roomId);
             command.Parameters.AddWithValue("@startDate", startDate.ToString("dd.MM.yyyy. HH:mm:ss"));
-            command.Parameters.AddWithValue("@endDate", endDate ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@endDate", endDate != null ? endDate.Value.ToString("dd.MM.yyyy. HH:mm:ss") : (object)DBNull.Value);
             command.Parameters.AddWithValue("@guest_id", guestId);
 
             command.ExecuteNonQuery();
@@ -250,7 +250,7 @@ namespace HotelReservations.Repository
                 
                 command.CommandText = "UPDATE [dbo].[GuestsInRoom] SET endDate = @endDate WHERE room_id = @room_id AND startDate = @startDate AND guest_id = @guest_id";
                 command.Parameters.Clear(); 
-                command.Parameters.AddWithValue("@endDate", endDate ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@endDate", endDate != null ? endDate.Value.ToString("dd.MM.yyyy. HH:mm:ss") : (object)DBNull.Value);
                 command.Parameters.AddWithValue("@room_id", roomId);
                 command.Parameters.AddWithValue("@startDate", startDate.ToString("dd.MM.yyyy. HH:mm:ss"));
                 command.Parameters.AddWithValue("@guest_id", guestId);
@@ -262,7 +262,7 @@ namespace HotelReservations.Repository
                 command.Parameters.Clear(); 
                 command.Parameters.AddWithValue("@room_id", roomId);
                 command.Parameters.AddWithValue("@startDate", startDate.ToString("dd.MM.yyyy. HH:mm:ss"));
-                command.Parameters.AddWithValue("@endDate", endDate ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@endDate", endDate != null ? endDate.Value.ToString("dd.MM.yyyy. HH:mm:ss") : (object)DBNull.Value);
                 command.Parameters.AddWithValue("@guest_id", guestId);
             }
 
@@ -280,23 +280,25 @@ namespace HotelReservations.Repository
                 command.Parameters.AddWithValue("@room_id", reservation.RoomId);
                 command.Parameters.AddWithValue("@startDate", reservation.StartDateTime.ToString("dd.MM.yyyy. HH:mm:ss"));
 
-                SqlDataAdapter adapter = new SqlDataAdapter(command);
-                DataSet dataSet = new DataSet();
+                conn.Open();
 
-                adapter.Fill(dataSet, "GuestsInRoom");
+                SqlDataReader reader = command.ExecuteReader();
 
-                foreach (DataRow row in dataSet.Tables["GuestsInRoom"]!.Rows)
+                while (reader.Read())
                 {
-                    int guestId = (int)row["guest_id"];
+                    int guestId = (int)reader["guest_id"];
                     Guest guest = GetGuestById(guestId);
                     if (guest != null)
                     {
                         guests.Add(guest);
                     }
                 }
+
+                reader.Close();
             }
             return guests;
         }
+
 
 
 

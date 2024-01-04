@@ -59,7 +59,7 @@ namespace HotelReservations.Service
                 var index = Hotel.GetInstance().Rooms.FindIndex(r => r.Id == room.Id);
                 Hotel.GetInstance().Rooms[index] = room;
             }
-            roomRepository.Save(Hotel.GetInstance().Rooms);
+           
 
         }
 
