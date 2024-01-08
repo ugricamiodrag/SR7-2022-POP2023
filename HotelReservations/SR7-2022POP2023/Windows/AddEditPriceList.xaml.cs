@@ -51,18 +51,24 @@ namespace HotelReservations.Windows
 
         private void AdjustWindow(Price? price)
         {
+            var roomTypes = roomService.GetAllActiveRoomTypes();
+            RoomTypesCB.ItemsSource = roomTypes;
+            var reservationTypes = plService.reservationTypes;
+            ReservationTypeCB.ItemsSource = reservationTypes;
             if (price != null)
             {
                 Title = "Edit Price";
+                RoomTypesCB.ItemsSource = new List<RoomType> { price.RoomType };
+                RoomTypesCB.SelectedItem = price.RoomType;
+                RoomTypesCB.IsEnabled = false;
+                ReservationTypeCB.IsEnabled = false;
+
             }
             else
             {
                 Title = "Add Price";
             }
-            var roomTypes = roomService.GetAllActiveRoomTypes();
-            RoomTypesCB.ItemsSource = roomTypes;
-            var reservationTypes = plService.reservationTypes;
-            ReservationTypeCB.ItemsSource = reservationTypes;
+           
 
         }
 
@@ -74,7 +80,7 @@ namespace HotelReservations.Windows
                 return;
             }
 
-            if (isEditing == false && plService.DoesPriceExistForRoomAndReservationType(contextPrice))
+            if (isEditing == false && plService.DoesPriceExistForRoomAndReservationType(contextPrice) == true)
             {
                 MessageBox.Show("There is already a price for this type of room and reservation.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;

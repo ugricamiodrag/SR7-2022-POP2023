@@ -59,8 +59,12 @@ namespace HotelReservations.Service
         public bool DoesPriceExistForRoomAndReservationType(Price contextPrice)
         {
             var allPrices = GetAllPrices();
-            return allPrices.Any(price => price.RoomType == contextPrice.RoomType && price.ReservationType == contextPrice.ReservationType);
+            return allPrices.Any(price =>
+                price.RoomType.Id == contextPrice.RoomType.Id &&
+                price.ReservationType == contextPrice.ReservationType &&
+                price.IsActive);
         }
+
 
         public List<Price> GetPricesByRoomType(RoomType roomType)
         {

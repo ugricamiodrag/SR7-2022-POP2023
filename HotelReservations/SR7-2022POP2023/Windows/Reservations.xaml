@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -19,9 +20,17 @@
             <Button Name="CheckOutGuestBtn" Content="Check out guest(s)" BorderBrush="LightGray" Margin="5,0,0,0" Click="CheckOutGuestBtn_Click"/>
         </ToolBar>
 
-        
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Content="Room Number:" VerticalContentAlignment="Center"/>
+            <TextBox Name="RoomNumberSearchTB" Height="24" Width="70" Margin="3" VerticalContentAlignment="Center" PreviewKeyUp="RoomNumberSearchTB_PreviewKeyUp"/>
+            <Label Content="Start Date:" VerticalContentAlignment="Center" Margin="10,0,0,0"/>
+            <DatePicker Name="StartDatePicker" Height="24" Width="120" Margin="3" VerticalContentAlignment="Center" SelectedDateChanged="StartDatePicker_SelectedDateChanged"/>
+            <Label Content="End Date:" VerticalContentAlignment="Center" Margin="10,0,0,0"/>
+            <DatePicker Name="EndDatePicker" Height="24" Width="120" Margin="3" VerticalContentAlignment="Center" SelectedDateChanged="EndDatePicker_SelectedDateChanged"/>
+        </StackPanel>
 
-        <DataGrid Name="ReservationDG" Grid.Row="1" 
+
+        <DataGrid Name="ReservationDG" Grid.Row="2" 
           IsReadOnly="True" AutoGeneratingColumn="ReservationDG_AutoGeneratingColumn" SelectionUnit="FullRow"/>
 
 

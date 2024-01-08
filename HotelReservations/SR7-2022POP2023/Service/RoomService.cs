@@ -128,7 +128,20 @@ namespace HotelReservations.Service
             return null;
         }
 
-       
+        public Room getRoomById(int id)
+        {
+            var rooms = GetAllRooms();
+            foreach (var room in rooms)
+            {
+                if (room.Id == id)
+                {
+                    return room;
+                }
+            }
+            return null;
+        }
+
+
 
 
 

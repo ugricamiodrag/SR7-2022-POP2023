@@ -38,12 +38,36 @@ namespace HotelReservations.Windows
             var allRes = resService.getAllReservations();
 
             view = CollectionViewSource.GetDefaultView(allRes);
+            view.Filter = DoFilter;
+
+
             ReservationDG.ItemsSource = null;
             ReservationDG.ItemsSource = view;
             ReservationDG.IsSynchronizedWithCurrentItem = true;
 
             ReservationDG.SelectedIndex = -1;
             view.Refresh();
+        }
+
+        private bool DoFilter(object reservationObject)
+        {
+            var reservation = reservationObject as Reservation;
+
+            var roomNumberSearchParam = RoomNumberSearchTB.Text.ToLower();
+            var arrivalDateSearchParam = StartDatePicker.SelectedDate;
+            var departureDateSearchParam = EndDatePicker.SelectedDate;
+            var reservationRoomNumber = roomService.getRoomById(reservation.RoomId);
+
+            bool matchesRoomNumber = string.IsNullOrEmpty(roomNumberSearchParam) ||
+                                     reservationRoomNumber.RoomNumber.ToString().Contains(roomNumberSearchParam);
+
+            bool matchesArrivalDate = arrivalDateSearchParam == null ||
+                                      reservation.StartDateTime.Date == arrivalDateSearchParam.Value.Date;
+
+            bool matchesDepartureDate = departureDateSearchParam == null ||
+                                        reservation.EndDateTime?.Date == departureDateSearchParam.Value.Date;
+
+            return matchesRoomNumber && matchesArrivalDate && matchesDepartureDate;
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
@@ -181,6 +205,20 @@ namespace HotelReservations.Windows
             }
         }
 
+        private void RoomNumberSearchTB_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            view.Refresh();
+        }
+
+        private void StartDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            view.Refresh();
+        }
+
+        private void EndDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            view.Refresh();
+        }
     }
 }
 
