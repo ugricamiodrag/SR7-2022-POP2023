@@ -51,7 +51,7 @@ namespace HotelReservations.Windows
                         var difference = (int)(endDate - selectedReservation.StartDateTime).TotalDays;
                         ReservationType resType = difference > 1 ? ReservationType.Night : ReservationType.Day;
                         List<Price> prices = GetPricesForRoomType(roomType, resType);
-
+                        selectedReservation.ReservationType = resType;
                         if (prices.Any())
                         {
                             double priceValue = prices.FirstOrDefault()?.PriceValue ?? 0;
