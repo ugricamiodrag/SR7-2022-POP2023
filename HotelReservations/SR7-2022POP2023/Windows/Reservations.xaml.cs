@@ -181,6 +181,7 @@ namespace HotelReservations.Windows
 
         private void CheckOutGuestBtn_Click(object sender, RoutedEventArgs e)
         {
+            var dateNow = DateTime.Now;
             var selectedReservation = (Reservation)ReservationDG.SelectedItem;
 
             if (selectedReservation != null)
@@ -190,6 +191,13 @@ namespace HotelReservations.Windows
                     MessageBox.Show("This reservation is already checked out.");
                     return;
                 }
+
+                if(dateNow < selectedReservation.StartDateTime)
+                {
+                    MessageBox.Show("You can't perform this action at the time.");
+                    return;
+                }
+
 
                 var checkOutConfirmation = MessageBox.Show("Are you sure you want to check out this reservation?", "Checkout Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
