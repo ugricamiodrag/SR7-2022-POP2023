@@ -27,9 +27,9 @@ namespace HotelReservations.Repository
 
                     command.Parameters.Add(new SqlParameter("@reservation_room_id", reservation.RoomId));
                     command.Parameters.Add(new SqlParameter("@reservation_type", reservation.ReservationType.ToString()));
-                    command.Parameters.Add(new SqlParameter("@reservation_start_date", reservation.StartDateTime.ToString()));
+                    command.Parameters.Add(new SqlParameter("@reservation_start_date", reservation.StartDateTime.ToString("dd.MM.yyyy. HH:mm:ss")));
                     command.Parameters.Add(new SqlParameter("@reservation_end_date", reservation.EndDateTime != null ? (object)reservation.EndDateTime.Value.ToString("dd.MM.yyyy. HH:mm:ss") : DBNull.Value));
-                    command.Parameters.Add(new SqlParameter("@reservation_total_price", reservation.TotalPrice != null ? (object)reservation.TotalPrice : DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@reservation_total_price", reservation.TotalPrice != null ? (object)reservation.TotalPrice : default(double)));
                     command.Parameters.Add(new SqlParameter("@reservation_is_active", reservation.IsActive));
 
 

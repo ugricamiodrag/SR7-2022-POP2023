@@ -158,7 +158,7 @@ namespace HotelReservations.Service
                 Hotel.GetInstance().RoomTypes[index] = roomType;
             }
 
-            roomTypeRepository.Save(Hotel.GetInstance().RoomTypes);
+            
         }
 
         public int GetNextIdValueForRT()
